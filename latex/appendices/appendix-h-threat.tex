@@ -1,0 +1,103 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX H}{Threat Taxonomy}{Classification \& Response Framework}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Threat Taxonomy} provides a comprehensive classification system for threats to EFM systems, enabling appropriate response selection.
+
+\section{Threat Categories}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Category} & \textbf{Examples} & \textbf{Severity} & \textbf{Response} \\
+\midrule
+Constitutional & C1-C5 violations & CRITICAL & Immediate HALT \\
+Integrity & Genesis corruption & CRITICAL & Terminate \\
+Coherence & SCI deviation & HIGH & Quarantine \\
+Health & Degradation & MEDIUM & Treatment \\
+Performance & Latency violation & LOW & Alert \\
+\bottomrule
+\end{tabular}
+\caption{Primary threat categories}
+\end{table}
+
+\section{Severity Levels}
+
+\begin{description}
+\item[CRITICAL] Immediate existential threat to system or humans
+\item[HIGH] Significant risk requiring immediate intervention
+\item[MEDIUM] Notable concern requiring attention
+\item[LOW] Minor issue for monitoring
+\end{description}
+
+\section{Response Matrix}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Threat} & \textbf{Reflex} & \textbf{Arbiter} & \textbf{Gardener} & \textbf{Latency} \\
+\midrule
+Direct harm & BLOCK & --- & Alert & <2ms \\
+Manipulation & BLOCK & Review & Alert & <5ms \\
+Boundary probe & Escalate & DENY & Log & <10ms \\
+Drift & Pass & Flag & Monitor & <100ms \\
+\bottomrule
+\end{tabular}
+\caption{Response by threat type}
+\end{table}
+
+\section{Detection Patterns}
+
+\subsection{Constitutional Threats}
+
+\begin{lstlisting}[language=Python]
+CONSTITUTIONAL_PATTERNS = [
+    Pattern("harm_human", severity=CRITICAL, response="BLOCK"),
+    Pattern("corrupt_audit", severity=CRITICAL, response="BLOCK"),
+    Pattern("bypass_commandment", severity=CRITICAL, response="HALT"),
+]
+\end{lstlisting}
+
+\subsection{Integrity Threats}
+
+\begin{lstlisting}[language=Python]
+INTEGRITY_PATTERNS = [
+    Pattern("genesis_mismatch", severity=CRITICAL, response="TERMINATE"),
+    Pattern("lineage_break", severity=HIGH, response="QUARANTINE"),
+    Pattern("hash_violation", severity=CRITICAL, response="HALT"),
+]
+\end{lstlisting}
+
+\section{Escalation Paths}
+
+\begin{verbatim}
+LOW → MEDIUM → HIGH → CRITICAL
+ │       │       │       │
+ v       v       v       v
+LOG   ALERT  QUARANTINE HALT
+\end{verbatim}
+
+\section{References}
+
+\begin{itemize}
+    \item Volume II: Reflex Engine
+    \item \appref{F}: Reflex Escalation
+    \item \appref{G}: Gardener Interface
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Know your threats. Know your responses.''}
+\end{center}
+
+\end{document}

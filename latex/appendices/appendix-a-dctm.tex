@@ -1,0 +1,157 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX A}{d-CTM Forensic Chain}{Distributed Capsule Transaction Memory}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{d-CTM (Distributed Capsule Transaction Memory)} is the forensic backbone of EFM---an append-only, cryptographically verified log of all system events.
+
+\begin{notebox}
+\textbf{Core Principle:} Every action is logged. Every log entry is permanent.
+\end{notebox}
+
+\section{Architecture}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│                        d-CTM                                │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │   LOGGER    │  │   CHAIN     │  │    QUERY            │ │
+│  │   API       │→ │   MANAGER   │→ │    ENGINE           │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
+│         │               │                    │              │
+│         v               v                    v              │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              PERSISTENT STORAGE                      │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+\end{verbatim}
+
+\section{Entry Structure}
+
+\begin{lstlisting}[language=Python]
+@dataclass
+class DCTMEntry:
+    """
+    A single entry in the d-CTM chain.
+    """
+    id: str                    # Unique identifier
+    timestamp: int             # Unix milliseconds
+    event_type: str            # Event category
+    entity_id: str             # Capsule or system ID
+    data: Dict[str, Any]       # Event data
+    
+    # Chain integrity
+    previous_hash: str         # Link to previous entry
+    hash: str                  # SHA-256 of this entry
+    signature: str             # Ed25519 signature
+\end{lstlisting}
+
+\section{Invariants}
+
+\begin{immutablebox}
+\textbf{INV-5:} The d-CTM log is append-only. No entry can be modified or deleted after creation.
+\end{immutablebox}
+
+\section{Event Types}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Category} & \textbf{Events} & \textbf{Retention} \\
+\midrule
+SPAWN & CAPSULE\_CREATED, GENESIS\_SIGNED & Permanent \\
+HEALTH & HEALTH\_CHECK, TREATMENT\_APPLIED & 90 days \\
+DECISION & REFLEX\_BLOCK, ARBITER\_DECISION & Permanent \\
+GARDENER & OVERRIDE, QUARANTINE & Permanent \\
+\bottomrule
+\end{tabular}
+\caption{d-CTM event categories}
+\end{table}
+
+\section{Implementation}
+
+\begin{lstlisting}[language=Python]
+class DCTM:
+    """
+    Distributed Capsule Transaction Memory.
+    """
+    
+    WRITE_LATENCY_MS = 5
+    
+    def log(self, event_type: str, entity_id: str, 
+            data: Dict[str, Any]) -> str:
+        """
+        Log an event to the d-CTM chain.
+        """
+        entry = DCTMEntry(
+            id=str(uuid.uuid4()),
+            timestamp=int(time.time() * 1000),
+            event_type=event_type,
+            entity_id=entity_id,
+            data=data,
+            previous_hash=self._get_latest_hash()
+        )
+        
+        entry.hash = self._compute_hash(entry)
+        entry.signature = self._sign(entry.hash)
+        
+        self._persist(entry)
+        
+        return entry.id
+    
+    def verify_chain(self) -> bool:
+        """
+        Verify entire chain integrity.
+        """
+        for i, entry in enumerate(self.entries):
+            # Verify hash
+            if entry.hash != self._compute_hash(entry):
+                return False
+            
+            # Verify chain link
+            if i > 0 and entry.previous_hash != self.entries[i-1].hash:
+                return False
+        
+        return True
+\end{lstlisting}
+
+\section{Guarantees}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Property} & \textbf{Guarantee} \\
+\midrule
+Write Latency & \latency{5ms} \\
+Append-Only & No modifications or deletions \\
+Hash Chain & Every entry linked to previous \\
+Signature & Every entry cryptographically signed \\
+Verification & Chain integrity verifiable \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item Volume I: Genesis Protocol (cryptographic foundations)
+    \item \appref{E}: ZK-SP Audit Chain (zero-knowledge proofs)
+    \item \appref{G}: Gardener Interface (audit requirements)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Every action is logged. Every log entry is permanent.''}
+\end{center}
+
+\end{document}

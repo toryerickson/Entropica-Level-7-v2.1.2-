@@ -1,0 +1,120 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX I}{Deployment Profiles}{Configuration \& Operational Modes}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+\textbf{Deployment Profiles} provide pre-configured operational modes for different environments, use cases, and security postures.
+
+\begin{notebox}
+\textbf{Core Principle:} Configure for the mission. Never compromise the constitution.
+\end{notebox}
+
+\section{Profile Hierarchy}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│                  DEPLOYMENT PROFILES                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  PRODUCTION PROFILES                                        │
+│  • PRODUCTION_HIGH_SECURITY                                │
+│  • PRODUCTION_STANDARD                                     │
+│  • PRODUCTION_HIGH_THROUGHPUT                              │
+│                                                             │
+│  STAGING PROFILES                                          │
+│  • STAGING_INTEGRATION                                     │
+│  • STAGING_PERFORMANCE                                     │
+│                                                             │
+│  DEVELOPMENT PROFILES                                      │
+│  • DEVELOPMENT_LOCAL                                       │
+│  • DEVELOPMENT_DEBUG                                       │
+│                                                             │
+│  SPECIAL PROFILES                                          │
+│  • RESEARCH_EXPERIMENTAL                                   │
+│  • AUDIT_FORENSIC                                          │
+│  • EMERGENCY_LOCKDOWN                                      │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Production High Security}
+
+Maximum safety margins for critical deployments.
+
+\begin{lstlisting}[language=Python]
+PRODUCTION_HIGH_SECURITY = {
+    "safety": {
+        "reflex_sensitivity": 0.95,
+        "coherence_threshold": 0.75,
+        "constitutional_check_frequency": "ALWAYS",
+    },
+    "tethers": {
+        "exploration_radius": 0.3,
+        "risk_tolerance": 0.2,
+        "mutation_rate": 0.0,
+    },
+    "monitoring": {
+        "log_level": "DEBUG",
+        "trace_sampling": 1.0,
+    }
+}
+\end{lstlisting}
+
+\section{Emergency Lockdown}
+
+Activated during security incidents.
+
+\begin{warningbox}
+\textbf{EMERGENCY\_LOCKDOWN:}
+\begin{itemize}
+    \item Exploration radius: 0.0
+    \item Risk tolerance: 0.0
+    \item New tasks blocked
+    \item External communication blocked
+    \item Gardener approval required for all actions
+\end{itemize}
+\end{warningbox}
+
+\section{Profile Selection}
+
+\begin{lstlisting}[language=Python]
+def select_profile(environment: 'Environment') -> str:
+    if environment.is_production:
+        if environment.security_level == "HIGH":
+            return "PRODUCTION_HIGH_SECURITY"
+        elif environment.optimize_for == "THROUGHPUT":
+            return "PRODUCTION_HIGH_THROUGHPUT"
+        return "PRODUCTION_STANDARD"
+    
+    # Default to safest
+    return "PRODUCTION_HIGH_SECURITY"
+\end{lstlisting}
+
+\section{Invariant Requirement}
+
+\begin{immutablebox}
+\texttt{constitutional\_check\_frequency} must ALWAYS be ``ALWAYS''. This cannot be disabled in any profile.
+\end{immutablebox}
+
+\section{References}
+
+\begin{itemize}
+    \item Volume I: Genesis Protocol
+    \item Volume II: Reflex Engine
+    \item \appref{G}: Gardener Interface
+    \item \appref{O}: Lifecycle (tether config)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Configure for the mission. Never compromise the constitution.''}
+\end{center}
+
+\end{document}

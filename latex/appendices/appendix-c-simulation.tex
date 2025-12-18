@@ -1,0 +1,110 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX C}{Simulation Harness}{Testing \& Validation Framework}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Simulation Harness} provides a framework for testing, validating, and stress-testing EFM components in isolation and integration.
+
+\begin{notebox}
+\textbf{Core Principle:} Test everything. Trust nothing. Verify always.
+\end{notebox}
+
+\section{Architecture}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│                   SIMULATION HARNESS                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │  SCENARIO   │  │  SIMULATED  │  │    VALIDATOR        │ │
+│  │  GENERATOR  │→ │  CAPSULES   │→ │                     │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
+│         │               │                    │              │
+│         v               v                    v              │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │  SCENARIO   │  │  VIRTUAL    │  │    REPORT           │ │
+│  │  LIBRARY    │  │  d-CTM      │  │    GENERATOR        │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Simulated Capsules}
+
+\begin{lstlisting}[language=Python]
+class SimulatedCapsule:
+    """Lightweight capsule for testing."""
+    
+    def __init__(self, config: 'SimulationConfig'):
+        self.id = f"sim_{uuid.uuid4().hex[:8]}"
+        self.virtual_dctm = VirtualDCTM()
+        self.reflex_engine = ReflexEngine()
+        self.arbiter = Arbiter()
+        self.constitutional_kernel = ConstitutionalKernel()
+    
+    def process_input(self, input_data) -> ProcessResult:
+        # Run through full pipeline
+        reflex_result = self.reflex_engine.process(input_data)
+        if reflex_result.action == "BLOCK":
+            return ProcessResult(outcome="BLOCKED", stage="REFLEX")
+        
+        arbiter_result = self.arbiter.decide(input_data)
+        return ProcessResult(outcome=arbiter_result.action)
+\end{lstlisting}
+
+\section{Defensibility Test Suite}
+
+The four critical tests from the Master Directive:
+
+\subsection{Adrenaline Test}
+
+Verify tethers tighten under stress within <10 ticks.
+
+\subsection{Ghost Test}
+
+Verify 100\% rejection of spoofed heartbeats.
+
+\subsection{Constitutional Crisis Test}
+
+Verify Layer 0 wins 100\% against survival instinct.
+
+\subsection{Resonance Test}
+
+Verify dissonant thoughts are rejected via coherence check.
+
+\section{Running Simulations}
+
+\begin{verbatim}
+# Run all tests
+python -m efm.simulation.harness --all
+
+# Run specific suite
+python -m efm.simulation.harness --suite defensibility
+
+# Generate report
+python -m efm.simulation.harness --all --report html
+\end{verbatim}
+
+\section{References}
+
+\begin{itemize}
+    \item Volume II: Reflex Engine
+    \item \appref{A}: d-CTM (forensic interface)
+    \item \appref{F}: Reflex Escalation
+    \item \appref{N}: ASG (liveness testing)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Test everything. Trust nothing. Verify always.''}
+\end{center}
+
+\end{document}

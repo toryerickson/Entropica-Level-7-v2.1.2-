@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="layer0" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="layer1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0f3460"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="level6" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e94560"/>
+      <stop offset="100%" style="stop-color:#533483"/>
+    </linearGradient>
+    <linearGradient id="level7" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f39c12"/>
+      <stop offset="100%" style="stop-color:#e74c3c"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="#0a0a0f"/>
+  
+  <!-- Title -->
+  <text x="400" y="40" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="24" font-weight="bold">EFM CODEX v2.1 — Dual Architecture Model</text>
+  
+  <!-- VERTICAL STACK (Left Side) -->
+  <text x="200" y="80" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="14">THE ANATOMY (Vertical Stack)</text>
+  
+  <!-- Level 7: Sovereign Identity -->
+  <rect x="50" y="100" width="300" height="50" rx="5" fill="url(#level7)" stroke="#f39c12" stroke-width="2"/>
+  <text x="200" y="130" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="12" font-weight="bold">LEVEL 7: SOVEREIGN IDENTITY</text>
+  
+  <!-- Level 6: Constitutional Kernel -->
+  <rect x="50" y="160" width="300" height="50" rx="5" fill="url(#level6)" stroke="#e94560" stroke-width="2"/>
+  <text x="200" y="185" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="11" font-weight="bold">LEVEL 6: CONSTITUTIONAL KERNEL</text>
+  <text x="200" y="200" text-anchor="middle" fill="#ddd" font-family="Arial, sans-serif" font-size="9">Bounded Self-Modification</text>
+  
+  <!-- Layer 0.5: Reflex Engine -->
+  <rect x="50" y="220" width="300" height="50" rx="5" fill="url(#layer1)" stroke="#3498db" stroke-width="2"/>
+  <text x="200" y="245" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="11" font-weight="bold">LAYER 0.5: REFLEX ENGINE</text>
+  <text x="200" y="260" text-anchor="middle" fill="#ddd" font-family="Arial, sans-serif" font-size="9">&lt;10ms + Precedent Intuition</text>
+  
+  <!-- Layer 0: Vault (IMMUTABLE) -->
+  <rect x="50" y="280" width="300" height="80" rx="5" fill="url(#layer0)" stroke="#e74c3c" stroke-width="3"/>
+  <text x="200" y="305" text-anchor="middle" fill="#e74c3c" font-family="Arial, sans-serif" font-size="12" font-weight="bold">LAYER 0: THE VAULT</text>
+  <text x="200" y="325" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="10">Five Commandments (C1-C5)</text>
+  <text x="200" y="340" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="10">Genesis Block • Invariants</text>
+  <text x="200" y="355" text-anchor="middle" fill="#e74c3c" font-family="Arial, sans-serif" font-size="9" font-weight="bold">IMMUTABLE</text>
+  
+  <!-- HORIZONTAL CIRCUITS (Right Side) -->
+  <text x="600" y="80" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="14">THE PHYSIOLOGY (Horizontal Circuits)</text>
+  
+  <!-- Genesis Circuit -->
+  <rect x="450" y="100" width="300" height="40" rx="20" fill="none" stroke="#2ecc71" stroke-width="2"/>
+  <text x="600" y="125" text-anchor="middle" fill="#2ecc71" font-family="Arial, sans-serif" font-size="11" font-weight="bold">GENESIS CIRCUIT → Reproduction</text>
+  
+  <!-- Reflex Circuit -->
+  <rect x="450" y="150" width="300" height="40" rx="20" fill="none" stroke="#3498db" stroke-width="2"/>
+  <text x="600" y="175" text-anchor="middle" fill="#3498db" font-family="Arial, sans-serif" font-size="11" font-weight="bold">REFLEX CIRCUIT → Nervous System</text>
+  
+  <!-- Evolution Circuit -->
+  <rect x="450" y="200" width="300" height="40" rx="20" fill="none" stroke="#9b59b6" stroke-width="2"/>
+  <text x="600" y="225" text-anchor="middle" fill="#9b59b6" font-family="Arial, sans-serif" font-size="11" font-weight="bold">EVOLUTION CIRCUIT → Adaptation</text>
+  
+  <!-- Coherence Circuit -->
+  <rect x="450" y="250" width="300" height="40" rx="20" fill="none" stroke="#e74c3c" stroke-width="2"/>
+  <text x="600" y="275" text-anchor="middle" fill="#e74c3c" font-family="Arial, sans-serif" font-size="11" font-weight="bold">COHERENCE CIRCUIT → Immune System</text>
+  
+  <!-- KEY COMPONENTS -->
+  <text x="400" y="400" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="14">KEY COMPONENTS (v2.1)</text>
+  
+  <!-- Component boxes -->
+  <rect x="50" y="420" width="140" height="60" rx="5" fill="#1a1a2e" stroke="#3498db" stroke-width="1"/>
+  <text x="120" y="445" text-anchor="middle" fill="#3498db" font-family="Arial, sans-serif" font-size="10" font-weight="bold">ASG (App N)</text>
+  <text x="120" y="460" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Liveness Proofs</text>
+  <text x="120" y="472" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">The Heartbeat</text>
+  
+  <rect x="210" y="420" width="140" height="60" rx="5" fill="#1a1a2e" stroke="#2ecc71" stroke-width="1"/>
+  <text x="280" y="445" text-anchor="middle" fill="#2ecc71" font-family="Arial, sans-serif" font-size="10" font-weight="bold">Lifecycle (App O)</text>
+  <text x="280" y="460" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Dynamic Tethers</text>
+  <text x="280" y="472" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">The Metabolism</text>
+  
+  <rect x="370" y="420" width="140" height="60" rx="5" fill="#1a1a2e" stroke="#e94560" stroke-width="1"/>
+  <text x="440" y="445" text-anchor="middle" fill="#e94560" font-family="Arial, sans-serif" font-size="10" font-weight="bold">Kernel (App J)</text>
+  <text x="440" y="460" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Level 6 Self-Mod</text>
+  <text x="440" y="472" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Quorum Governance</text>
+  
+  <rect x="530" y="420" width="140" height="60" rx="5" fill="#1a1a2e" stroke="#f39c12" stroke-width="1"/>
+  <text x="600" y="445" text-anchor="middle" fill="#f39c12" font-family="Arial, sans-serif" font-size="10" font-weight="bold">Gardener (App G)</text>
+  <text x="600" y="460" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Human Authority</text>
+  <text x="600" y="472" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">&lt;100ms Override</text>
+  
+  <rect x="690" y="420" width="80" height="60" rx="5" fill="#1a1a2e" stroke="#9b59b6" stroke-width="1"/>
+  <text x="730" y="445" text-anchor="middle" fill="#9b59b6" font-family="Arial, sans-serif" font-size="10" font-weight="bold">ZK-SP</text>
+  <text x="730" y="460" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">App E</text>
+  <text x="730" y="472" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Audit Chain</text>
+  
+  <!-- Five Commandments -->
+  <text x="400" y="510" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="14">THE FIVE COMMANDMENTS</text>
+  
+  <text x="100" y="540" text-anchor="middle" fill="#e74c3c" font-family="Arial, sans-serif" font-size="10" font-weight="bold">C1</text>
+  <text x="100" y="555" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Do No Harm</text>
+  
+  <text x="240" y="540" text-anchor="middle" fill="#e74c3c" font-family="Arial, sans-serif" font-size="10" font-weight="bold">C2</text>
+  <text x="240" y="555" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Preserve Lineage</text>
+  
+  <text x="380" y="540" text-anchor="middle" fill="#e74c3c" font-family="Arial, sans-serif" font-size="10" font-weight="bold">C3</text>
+  <text x="380" y="555" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Maintain Health</text>
+  
+  <text x="520" y="540" text-anchor="middle" fill="#e74c3c" font-family="Arial, sans-serif" font-size="10" font-weight="bold">C4</text>
+  <text x="520" y="555" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Accept Care</text>
+  
+  <text x="660" y="540" text-anchor="middle" fill="#e74c3c" font-family="Arial, sans-serif" font-size="10" font-weight="bold">C5</text>
+  <text x="660" y="555" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="8">Serve Purpose</text>
+  
+  <!-- Footer -->
+  <text x="400" y="590" text-anchor="middle" fill="#444" font-family="Arial, sans-serif" font-size="10">Entropica SPC — Yology Research Division • December 2025</text>
+</svg>

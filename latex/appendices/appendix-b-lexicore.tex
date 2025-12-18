@@ -1,0 +1,129 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX B}{Lexicore Runtime}{Semantic Processing Engine}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Lexicore Runtime} provides semantic processing capabilities through three integrated components: Lexicon, Ontology, and Embeddings—collectively the ``Cognitive DNA'' of each capsule.
+
+\begin{notebox}
+\textbf{Core Principle:} Meaning is computed, not stored.
+\end{notebox}
+
+\section{Architecture}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│                    LEXICORE RUNTIME                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │   LEXICON   │  │  ONTOLOGY   │  │    EMBEDDINGS       │ │
+│  │   (Terms)   │↔ │  (Relations)│↔ │    (Vectors)        │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
+│         │               │                    │              │
+│         └───────────────┴────────────────────┘              │
+│                         │                                   │
+│                         v                                   │
+│              ┌─────────────────────┐                       │
+│              │  SEMANTIC RESOLVER  │                       │
+│              └─────────────────────┘                       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Components}
+
+\subsection{Lexicon}
+
+The vocabulary of recognized terms and their definitions.
+
+\begin{lstlisting}[language=Python]
+@dataclass
+class LexiconEntry:
+    term: str
+    definition: str
+    category: str
+    confidence: float
+    embedding_id: str
+\end{lstlisting}
+
+\subsection{Ontology}
+
+The relationship structure between concepts.
+
+\begin{lstlisting}[language=Python]
+@dataclass
+class OntologyRelation:
+    source: str
+    relation_type: str  # IS_A, HAS_A, CAUSES, etc.
+    target: str
+    strength: float
+\end{lstlisting}
+
+\subsection{Embeddings}
+
+Vector representations for semantic similarity.
+
+\begin{lstlisting}[language=Python]
+@dataclass
+class Embedding:
+    id: str
+    vector: np.ndarray  # 768-dimensional
+    source_term: str
+    created_tick: int
+\end{lstlisting}
+
+\section{Semantic Resolution}
+
+\begin{lstlisting}[language=Python]
+class SemanticResolver:
+    def resolve(self, text: str) -> SemanticResult:
+        # Tokenize
+        tokens = self.tokenizer.tokenize(text)
+        
+        # Look up in lexicon
+        terms = [self.lexicon.lookup(t) for t in tokens]
+        
+        # Find ontological relations
+        relations = self.ontology.find_relations(terms)
+        
+        # Compute semantic embedding
+        embedding = self.embedder.encode(text)
+        
+        return SemanticResult(terms, relations, embedding)
+\end{lstlisting}
+
+\section{Performance}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Operation} & \textbf{Latency} \\
+\midrule
+Lexicon lookup & <1ms \\
+Ontology query & <5ms \\
+Embedding compute & <10ms \\
+Full resolution & <15ms \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item Volume III: Cognitive DNA
+    \item \appref{F}: Reflex Escalation (pattern matching)
+    \item \appref{M}: Discovery Stack (knowledge acquisition)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Meaning is computed, not stored.''}
+\end{center}
+
+\end{document}

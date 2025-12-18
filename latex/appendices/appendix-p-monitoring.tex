@@ -1,0 +1,127 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX P}{Performance Monitoring}{Metrics, Observability \& SLAs}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+\textbf{Performance Monitoring} provides comprehensive observability ensuring EFM operates within specified bounds.
+
+\begin{notebox}
+\textbf{Core Principle:} What gets measured gets managed. What gets monitored stays healthy.
+\end{notebox}
+
+\section{Architecture}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│                 PERFORMANCE MONITORING                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │  METRIC     │  │ AGGREGATOR  │  │  ALERT ENGINE       │ │
+│  │ COLLECTORS  │→ │             │→ │                     │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
+│         │               │                    │              │
+│         v               v                    v              │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │ TIME SERIES │  │  DASHBOARD  │  │  NOTIFICATION       │ │
+│  │  DATABASE   │  │  SERVICE    │  │  SERVICE            │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Latency Metrics}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Metric} & \textbf{Target} & \textbf{Alert} & \textbf{Critical} \\
+\midrule
+reflex\_latency\_ms & <10ms & P99 >8ms & P99 >10ms \\
+intuition\_latency\_ms & <20ms & P99 >18ms & P99 >20ms \\
+arbiter\_latency\_ms & <100ms & P99 >90ms & P99 >100ms \\
+gardener\_override\_ms & <100ms & P99 >80ms & P99 >100ms \\
+\bottomrule
+\end{tabular}
+\caption{Latency SLAs}
+\end{table}
+
+\section{Health Metrics}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Metric} & \textbf{Target} & \textbf{Warning} & \textbf{Critical} \\
+\midrule
+capsule\_health\_avg & >0.65 & <0.55 & <0.40 \\
+swarm\_coherence\_index & >0.70 & <0.65 & <0.50 \\
+quarantine\_count & 0 & >3 & >10 \\
+\bottomrule
+\end{tabular}
+\caption{Health SLAs}
+\end{table}
+
+\section{Metric Collection}
+
+\begin{lstlisting}[language=Python]
+class MetricCollector:
+    def record_latency(self, name: str, latency_ms: float):
+        self.buffer.append(MetricPoint(
+            name=name,
+            value=latency_ms,
+            timestamp=int(time.time() * 1000),
+            unit="ms"
+        ))
+    
+    def get_percentile(self, name: str, percentile: float) -> float:
+        values = sorted(self.histograms[name])
+        index = int(len(values) * percentile / 100)
+        return values[min(index, len(values) - 1)]
+\end{lstlisting}
+
+\section{Alert Severity}
+
+\begin{description}
+\item[CRITICAL] System at risk — Immediate page
+\item[WARNING] Degraded performance — <5 min response
+\item[INFO] Notable event — Dashboard only
+\end{description}
+
+\section{Gardener Dashboard}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│  SYSTEM STATUS: ● HEALTHY                                   │
+│                                                             │
+│  CAPSULES: 47 active | SWARM: SCI 0.82 | THROUGHPUT: 1,247 │
+│                                                             │
+│  LATENCY (P99):                                            │
+│  Reflex:  ████░░░░░░ 3.2ms / 10ms                         │
+│  Arbiter: █████░░░░░ 45ms / 100ms                         │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{References}
+
+\begin{itemize}
+    \item Volume II: Reflex Engine (latency targets)
+    \item \appref{A}: d-CTM (audit logging)
+    \item \appref{G}: Gardener Interface (alerting)
+    \item \appref{N}: ASG (health metrics)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``What gets measured gets managed.''}
+\end{center}
+
+\end{document}

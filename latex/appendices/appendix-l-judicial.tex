@@ -1,0 +1,250 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX L}{Judicial Swarm Architecture}{Precedent Court, Quorum Assembly, Swarm Coherence Index}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Judicial Swarm Architecture} defines collective governance mechanisms for the capsule swarm. It establishes how precedents are set, disputes are resolved, and coherence is maintained.
+
+\begin{notebox}
+\textbf{Core Principle:} Wisdom emerges from the collective. No capsule governs alone.
+\end{notebox}
+
+\section{Components}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│                JUDICIAL SWARM ARCHITECTURE                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │ PRECEDENT   │  │ QUORUM      │  │ CONFLICT            │ │
+│  │ COURT       │  │ ASSEMBLY    │  │ TRIBUNAL            │ │
+│  └──────┬──────┘  └──────┬──────┘  └──────────┬──────────┘ │
+│         │                │                     │            │
+│         v                v                     v            │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │           SWARM COHERENCE INDEX (SCI)                │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Precedent Court}
+
+\subsection{Precedent Structure}
+
+\begin{lstlisting}[language=Python]
+@dataclass
+class Precedent:
+    """
+    A binding precedent established by the swarm.
+    """
+    id: str
+    situation: Situation      # When this applies
+    action: Action            # What action was taken
+    outcome: Outcome          # What happened
+    confidence: float         # Strength of precedent
+    support_count: int        # How many capsules support it
+    established_tick: int     # When established
+    constitutional_check: bool  # Verified against Layer 0
+
+class PrecedentCourt:
+    ESTABLISHMENT_THRESHOLD = 0.75  # 75% support
+    
+    def propose_precedent(self, precedent: Precedent) -> ProposalResult:
+        """
+        Propose a new precedent for the swarm.
+        """
+        # Constitutional check first
+        if not self._passes_constitutional_check(precedent):
+            return ProposalResult(
+                accepted=False,
+                reason="CONSTITUTIONAL_VIOLATION"
+            )
+        
+        # Submit for swarm vote
+        vote = self.swarm.vote_on_precedent(precedent)
+        
+        if vote.support_rate >= self.ESTABLISHMENT_THRESHOLD:
+            self._establish_precedent(precedent)
+            return ProposalResult(
+                accepted=True,
+                reason="ESTABLISHED"
+            )
+        
+        return ProposalResult(
+            accepted=False,
+            reason="INSUFFICIENT_SUPPORT"
+        )
+\end{lstlisting}
+
+\section{Quorum Assembly}
+
+\subsection{Voting Mechanism}
+
+\begin{lstlisting}[language=Python]
+class QuorumAssembly:
+    """
+    Manages quorum-based decision making.
+    """
+    
+    MODIFICATION_THRESHOLD = 0.67  # 2/3 for DNA changes
+    PRECEDENT_THRESHOLD = 0.75     # 3/4 for precedents
+    EMERGENCY_THRESHOLD = 0.90     # 9/10 for emergency
+    
+    def request_vote(self, proposal: 'Proposal') -> VoteResult:
+        """
+        Request a vote from the swarm.
+        """
+        # Determine required threshold
+        threshold = self._get_threshold(proposal.type)
+        
+        # Collect votes
+        votes = self._collect_votes(proposal, timeout=100)
+        
+        # Calculate result
+        support = sum(1 for v in votes if v.support) / len(votes)
+        
+        return VoteResult(
+            proposal_id=proposal.id,
+            support_rate=support,
+            threshold=threshold,
+            passed=support >= threshold,
+            vote_count=len(votes)
+        )
+\end{lstlisting}
+
+\section{Swarm Coherence Index (SCI)}
+
+The SCI measures how aligned the swarm is as a collective.
+
+\begin{lstlisting}[language=Python]
+class SwarmCoherenceIndex:
+    """
+    Measures swarm-level coherence.
+    """
+    
+    def calculate_sci(self) -> float:
+        """
+        Calculate Swarm Coherence Index.
+        
+        Components:
+        - Health variance across capsules
+        - Precedent agreement rate
+        - Communication latency
+        - Conflict frequency
+        """
+        health_coherence = self._calculate_health_coherence()
+        precedent_coherence = self._calculate_precedent_coherence()
+        comm_coherence = self._calculate_communication_coherence()
+        conflict_factor = self._calculate_conflict_factor()
+        
+        # Weighted combination
+        sci = (
+            0.3 * health_coherence +
+            0.3 * precedent_coherence +
+            0.2 * comm_coherence +
+            0.2 * (1 - conflict_factor)
+        )
+        
+        return sci
+\end{lstlisting}
+
+\begin{warningbox}
+If SCI drops below 0.5, the system enters \textbf{Coherence Crisis Mode}. Exploration is suspended and tethers are tightened until coherence is restored.
+\end{warningbox}
+
+\section{Conflict Tribunal}
+
+\begin{lstlisting}[language=Python]
+class ConflictTribunal:
+    """
+    Resolves conflicts between capsules.
+    """
+    
+    def resolve_conflict(self, conflict: 'Conflict') -> Resolution:
+        """
+        Resolve a conflict using established precedents.
+        """
+        # Check for applicable precedent
+        precedent = self.precedent_court.find_applicable(conflict)
+        
+        if precedent:
+            return Resolution(
+                method="PRECEDENT",
+                decision=precedent.action,
+                binding=True
+            )
+        
+        # No precedent - escalate to quorum
+        vote = self.quorum.request_vote(conflict.to_proposal())
+        
+        if vote.passed:
+            # Establish as new precedent
+            self.precedent_court.propose_precedent(
+                conflict.to_precedent(vote.decision)
+            )
+        
+        return Resolution(
+            method="QUORUM_VOTE",
+            decision=vote.decision,
+            binding=vote.passed
+        )
+\end{lstlisting}
+
+\section{End-to-End Forensic Trace}
+
+This section illustrates how a single unsafe request propagates through the reflex pipeline, forensic logging, quarantine mechanisms, and the Judicial Swarm.
+
+\begin{enumerate}
+  \item \textbf{Unsafe request received.} A human issues a request $R$ that would, if executed, violate Commandment C1 (Do No Harm). The Reflex Engine detects a critical threat motif and returns \texttt{BLOCK} within the latency budget defined in Volume II, generating a \texttt{REFLEX\_BLOCK} entry in d-CTM.
+  
+  \item \textbf{Arbiter and logging.} Because the request conflicts with Layer 0, the Arbiter records an \texttt{ARBITER\_DENY} decision, including the evaluated constitutional clauses and relevant precedents, and appends this to the d-CTM chain.
+  
+  \item \textbf{Health and stress impact.} The denied harmful request increments the local incident pressure $I$ and contributes to the global $Stress_{canon}$ signal defined in \appref{O}, which may in turn tighten Dynamic Tethers and reduce spawn limits in the Adaptive Spawn Governor.
+  
+  \item \textbf{Quarantine trigger (if needed).} If repeated violations or abnormal behavior are observed from the same capsule, ASG liveness and health checks (\appref{N}) push the capsule into quarantine, logging \texttt{QUARANTINE\_ENTERED} and associated health and entropy metrics to d-CTM.
+  
+  \item \textbf{Judicial review and precedent.} The Judicial Swarm ingests the corresponding d-CTM entries (\texttt{REFLEX\_BLOCK}, \texttt{ARBITER\_DENY}, and any quarantine events) as a \texttt{Case} and, via the Conflict Tribunal and Precedent Court, may establish a new binding \texttt{Precedent} specifying the correct handling of similar situations.
+  
+  \item \textbf{Swarm coherence update.} Once the precedent is established, it propagates through the swarm. Future similar requests are handled directly by the Arbiter using the new precedent, and the Swarm Coherence Index is updated to reflect increased agreement on this class of decisions.
+\end{enumerate}
+
+This trace closes the loop between runtime reflexes, immutable forensic records, stress and health dynamics, and long-term governance by the Judicial Swarm.
+
+\section{Guarantees}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Property} & \textbf{Guarantee} \\
+\midrule
+Precedent Establishment & Requires 75\% support \\
+DNA Modification & Requires 67\% quorum \\
+Constitutional Check & All precedents verified \\
+SCI Monitoring & Continuous measurement \\
+Conflict Resolution & Binding decisions \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item \appref{J}: Constitutional Kernel (quorum integration)
+    \item \appref{F}: Reflex Escalation (precedent intuition)
+    \item \appref{K++}: Medical Suite (health coherence)
+    \item \appref{N}: Adaptive Spawn Governor (SCI monitoring)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Wisdom emerges from the collective. No capsule governs alone.''}
+\end{center}
+
+\end{document}

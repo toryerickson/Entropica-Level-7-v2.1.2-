@@ -1,0 +1,136 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX E}{ZK-SP Audit Chain}{Zero-Knowledge Forensic Proofs}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{ZK-SP (Zero-Knowledge State Proof) Audit Chain} provides cryptographic verification of system state without revealing sensitive internal details.
+
+\begin{notebox}
+\textbf{Core Principle:} Prove compliance without exposing internals.
+\end{notebox}
+
+\section{Why Zero-Knowledge?}
+
+\begin{itemize}
+    \item \textbf{Privacy} --- Internal state remains confidential
+    \item \textbf{Verification} --- External parties can verify compliance
+    \item \textbf{Efficiency} --- Proofs are compact and fast to verify
+    \item \textbf{Non-forgeable} --- Cryptographically secure
+\end{itemize}
+
+\section{Proof Types}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Proof Type} & \textbf{Proves} & \textbf{Without Revealing} \\
+\midrule
+Health Proof & Health > threshold & Exact health value \\
+Lineage Proof & Valid ancestry & Internal structure \\
+Compliance Proof & Constitutional adherence & Decision details \\
+Action Proof & Action was logged & Action contents \\
+\bottomrule
+\end{tabular}
+\caption{ZK-SP proof types}
+\end{table}
+
+\section{Implementation}
+
+\begin{lstlisting}[language=Python]
+class ZKStateProof:
+    """
+    Zero-knowledge proof of system state.
+    """
+    
+    def generate_health_proof(self, capsule: 'Capsule', 
+                              threshold: float) -> HealthProof:
+        """
+        Prove health exceeds threshold without revealing exact value.
+        """
+        actual_health = capsule.get_health().composite
+        
+        # Generate ZK proof
+        proof = self.zk_system.prove(
+            statement="health >= threshold",
+            public_inputs={"threshold": threshold},
+            private_inputs={"health": actual_health}
+        )
+        
+        return HealthProof(
+            capsule_id=capsule.id,
+            threshold=threshold,
+            proof=proof,
+            timestamp=int(time.time() * 1000)
+        )
+    
+    def verify_health_proof(self, proof: HealthProof) -> bool:
+        """
+        Verify health proof without learning actual health.
+        """
+        return self.zk_system.verify(
+            proof.proof,
+            public_inputs={"threshold": proof.threshold}
+        )
+\end{lstlisting}
+
+\section{Audit Chain Integration}
+
+\begin{lstlisting}[language=Python]
+class ZKAuditChain:
+    """
+    Append-only chain of ZK proofs.
+    """
+    
+    def append_proof(self, proof: 'ZKProof') -> str:
+        """
+        Append proof to audit chain.
+        """
+        entry = AuditEntry(
+            id=str(uuid.uuid4()),
+            proof=proof,
+            previous_hash=self.chain[-1].hash if self.chain else "GENESIS",
+            timestamp=int(time.time() * 1000)
+        )
+        
+        entry.hash = sha256(entry.serialize())
+        self.chain.append(entry)
+        
+        return entry.id
+\end{lstlisting}
+
+\section{Guarantees}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Property} & \textbf{Guarantee} \\
+\midrule
+Proof Generation & \latency{100ms} \\
+Proof Verification & \latency{10ms} \\
+Soundness & Computationally secure \\
+Zero-Knowledge & No information leakage \\
+Chain Integrity & Append-only, hash-linked \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item \appref{A}: d-CTM (primary audit chain)
+    \item \appref{J}: Constitutional Kernel (compliance verification)
+    \item Volume I: Genesis Protocol (cryptographic foundations)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Prove compliance without exposing internals.''}
+\end{center}
+
+\end{document}

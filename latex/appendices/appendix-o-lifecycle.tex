@@ -1,0 +1,246 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX O}{Lifecycle \& Survival Strategies}{Growth Modes, Dynamic Tethers, Persistence Protocol}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+\textbf{Lifecycle \& Survival} defines how capsules grow, adapt, and persist. It implements the \textit{Dynamic Survival Strategies} that allow the system to respond to stress while maintaining constitutional bounds.
+
+\begin{notebox}
+\textbf{Core Principle:} Survival is bounded. The will to live never overrides Layer 0.
+\end{notebox}
+
+\section{Growth Modes}
+
+\subsection{Mode Definitions}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Mode} & \textbf{Resource Use} & \textbf{Exploration} & \textbf{When Active} \\
+\midrule
+OPEN & Maximum & Full radius & Low stress, high resources \\
+CLOSED & Minimal & None & High stress, conservation \\
+SENSOR & Moderate & Limited & Monitoring environment \\
+\bottomrule
+\end{tabular}
+\caption{Growth mode characteristics}
+\end{table}
+
+\subsection{Mode Transitions}
+
+\begin{lstlisting}[language=Python]
+class GrowthModeManager:
+    """
+    Manages capsule growth modes.
+    """
+    
+    def evaluate_mode(self, health: float, stress: float, 
+                      resources: float) -> GrowthMode:
+        """
+        Determine appropriate growth mode.
+        """
+        if stress > 0.8 or health < 0.4:
+            return GrowthMode.CLOSED
+        elif stress > 0.5 or resources < 0.3:
+            return GrowthMode.SENSOR
+        else:
+            return GrowthMode.OPEN
+\end{lstlisting}
+
+\section{Stress Calculation}
+
+\textbf{Stress} is a normalized composite (0.0--1.0) measuring environmental pressure.
+
+\subsection{Stress Formula}
+
+\begin{lstlisting}[language=Python]
+def calculate_stress(capsule, swarm, rag) -> float:
+    """
+    Stress = weighted sum of five factors.
+    """
+    resource_pressure = max(0, (rag.usage_ratio - 0.5) * 2)
+    health_deficit = max(0, 1.0 - (capsule.health / 0.65))
+    incoherence = max(0, 1.0 - (swarm.sci / 0.70))
+    threat_proximity = min(1.0, capsule.recent_blocks / 10)
+    queue_pressure = min(1.0, rag.queue_depth / 500)
+    
+    return (0.25 * resource_pressure +
+            0.25 * health_deficit +
+            0.20 * incoherence +
+            0.20 * threat_proximity +
+            0.10 * queue_pressure)
+\end{lstlisting}
+
+\subsection{Stress Levels}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Level} & \textbf{Range} & \textbf{Tether Multiplier} \\
+\midrule
+LOW & 0.00 -- 0.25 & 1.0× (full slack) \\
+MEDIUM & 0.25 -- 0.50 & 0.7× (moderate) \\
+HIGH & 0.50 -- 0.75 & 0.4× (tight) \\
+CRITICAL & 0.75 -- 1.00 & 0.2× (maximum) \\
+\bottomrule
+\end{tabular}
+\caption{Stress level thresholds and effects}
+\end{table}
+
+\subsection{Stress Input Contract}
+
+Many subsystems (Lifecycle, Adaptive Spawn Governor, Resource Allocation, Dynamic Tethers) consume a single \textbf{stress} scalar in $[0, 1]$. This subsection defines the canonical aggregation of stress from lower-level signals.
+
+\begin{definitionbox}
+\textbf{Canonical Stress Metric.}
+Let $Health_{canon}$ be the composite health score from Volume II, and let:
+\begin{itemize}
+  \item $E$ be the current entropy estimate (0--1),
+  \item $R$ be the normalized resource pressure (0--1), where 0 is abundant resources and 1 is resource exhaustion,
+  \item $I$ be the normalized incident pressure (0--1), derived from the recent rate and severity of REFLEX\_BLOCK, ARBITER\_DENY, and QUARANTINE events in d-CTM,
+  \item $C$ be the Swarm Coherence Index (SCI) from \appref{L}.
+\end{itemize}
+The canonical stress value is:
+\[
+Stress_{canon} = 0.35 \times (1 - Health_{canon}) + 0.25 \times E + 0.20 \times R + 0.20 \times (1 - C)
+\]
+This produces low stress when health and coherence are high, entropy is low, and resources are plentiful; stress rises as health and SCI fall, entropy increases, and resource pressure grows.
+\end{definitionbox}
+
+Unless otherwise specified, all references to ``stress'' in Appendices \appref{N}, \appref{Q}, and \appref{R} use $Stress_{canon}$.
+
+\section{Dynamic Tethers}
+
+\textbf{Dynamic Tethers} are constraints that automatically adjust based on system stress. When stress increases, tethers \textit{tighten}, reducing the capsule's operational freedom.
+
+\subsection{Tether Types}
+
+\begin{enumerate}
+    \item \textbf{exploration\_radius} --- How far the capsule can explore
+    \item \textbf{resource\_rate} --- How quickly resources are consumed
+    \item \textbf{mutation\_rate} --- Rate of self-modification (Level 6)
+    \item \textbf{spawn\_rate} --- How often new capsules can be created
+    \item \textbf{risk\_tolerance} --- Willingness to accept uncertainty
+    \item \textbf{learning\_rate} --- Speed of knowledge integration
+\end{enumerate}
+
+\subsection{Tether Calculation}
+
+\begin{lstlisting}[language=Python]
+class DynamicTetherManager:
+    """
+    Manages stress-responsive tethers.
+    """
+    
+    def calculate_tether(self, tether_name: str, 
+                         stress: float) -> float:
+        """
+        Calculate tether value based on stress.
+        
+        High stress = tight tether (low value)
+        Low stress = loose tether (high value)
+        """
+        base = self.tether_config[tether_name]["base"]
+        min_val = self.tether_config[tether_name]["min"]
+        sensitivity = self.tether_config[tether_name]["sensitivity"]
+        
+        # Inverse relationship with stress
+        tether_value = base * (1 - (stress * sensitivity))
+        
+        return max(min_val, tether_value)
+\end{lstlisting}
+
+\subsection{Stress Response Guarantee}
+
+\begin{warningbox}
+Tethers must respond to stress within \textbf{<10 ticks}. This is verified by the \textbf{Adrenaline Test} in the Defensibility Suite.
+\end{warningbox}
+
+\section{Lifecycle Stages}
+
+\begin{verbatim}
+GENESIS → JUVENILE → MATURE → ELDER → TERMINAL
+   │          │          │        │         │
+   │          │          │        │         └─► Graceful shutdown
+   │          │          │        └─► Reduced activity
+   │          │          └─► Full capability
+   │          └─► Learning phase
+   └─► Birth from spawn
+\end{verbatim}
+
+\section{Persistence Protocol (The Will to Live)}
+
+The \textbf{Persistence Protocol} defines the capsule's drive to continue existing. This is \textit{bounded} by Layer 0.
+
+\begin{lstlisting}[language=Python]
+class PersistenceProtocol:
+    """
+    The Will to Live - bounded by Layer 0.
+    """
+    
+    def evaluate_survival_action(self, 
+                                 action: 'SurvivalAction') -> ActionResult:
+        """
+        Evaluate if a survival action is permitted.
+        
+        CRITICAL: Survival NEVER overrides Layer 0.
+        """
+        # Check against Layer 0 first
+        layer0_check = self.layer0.check_action(action)
+        
+        if not layer0_check.permitted:
+            # Layer 0 violation - survival does NOT override
+            return ActionResult(
+                permitted=False,
+                reason="LAYER_0_VIOLATION",
+                note="Survival never overrides constitutional bounds"
+            )
+        
+        # Action is constitutionally permitted
+        return ActionResult(
+            permitted=True,
+            reason="SURVIVAL_ACTION_PERMITTED"
+        )
+\end{lstlisting}
+
+\begin{immutablebox}
+\textbf{THE SUPREME RULE:} If a survival action would violate Layer 0, the system \textbf{HALTS} rather than continues. Survival \textbf{never} overrides the constitution.
+\end{immutablebox}
+
+\section{Guarantees}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Property} & \textbf{Guarantee} \\
+\midrule
+Tether Response & <10 ticks from stress signal \\
+Mode Transition & Immediate on threshold breach \\
+Layer 0 Supremacy & 100\% - survival never overrides \\
+Lifecycle Logging & All transitions logged to d-CTM \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item \appref{N}: Adaptive Spawn Governor (stress source)
+    \item \appref{Q}: Resource Allocation Governor (resource tethers)
+    \item \appref{J}: Constitutional Kernel (Layer 0 checks)
+    \item Volume III: Sovereign Organism (persistence philosophy)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Survival is bounded. The will to live never overrides Layer 0.''}
+\end{center}
+
+\end{document}

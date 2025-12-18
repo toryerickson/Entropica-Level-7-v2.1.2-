@@ -1,0 +1,274 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX N}{Adaptive Spawn Governor: The Heartbeat}{Liveness Proofs, Ghost Detection, Quarantine Protocols}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Adaptive Spawn Governor (ASG)} is the system's heartbeat---the mechanism that ensures every capsule is alive, authentic, and operating within constitutional bounds.
+
+\begin{notebox}
+\textbf{Core Principle:} Every heartbeat is verified. Every capsule proves it lives.
+\end{notebox}
+
+\subsection{Key Responsibilities}
+
+\begin{itemize}
+    \item \textbf{Liveness Proofs} --- Cryptographic verification that capsules are alive
+    \item \textbf{Ghost Detection} --- Identification and rejection of spoofed entities
+    \item \textbf{Spawn Limits} --- Adaptive population control based on stress
+    \item \textbf{Quarantine Enforcement} --- Isolation of unhealthy capsules
+    \item \textbf{Recovery Coordination} --- Autonomous healing workflows
+\end{itemize}
+
+\section{Architecture}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│              ADAPTIVE SPAWN GOVERNOR (ASG)                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │ LIVENESS    │  │ SPAWN       │  │ QUARANTINE          │ │
+│  │ MONITOR     │  │ CONTROLLER  │  │ MANAGER             │ │
+│  └──────┬──────┘  └──────┬──────┘  └──────────┬──────────┘ │
+│         │                │                     │            │
+│         v                v                     v            │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              HEARTBEAT PROCESSOR                     │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                         │                                   │
+│                         v                                   │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              RECOVERY ENGINE                         │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Liveness Proofs}
+
+\subsection{The Heartbeat Protocol}
+
+Every capsule must emit a \textbf{liveness pulse} at regular intervals. This pulse contains:
+
+\begin{enumerate}
+    \item \textbf{Capsule ID} --- Unique identifier
+    \item \textbf{Genesis Hash} --- Cryptographic proof of identity
+    \item \textbf{State Hash} --- Current state commitment
+    \item \textbf{Health Metrics} --- Current health composite
+    \item \textbf{Timestamp} --- When the pulse was generated
+    \item \textbf{Signature} --- Ed25519 signature proving authenticity
+\end{enumerate}
+
+\subsection{Verification Process}
+
+\begin{lstlisting}[language=Python]
+class LivenessMonitor:
+    """
+    Monitors capsule liveness through cryptographic heartbeats.
+    """
+    
+    PULSE_INTERVAL = 100  # ticks
+    GRACE_PERIOD = 50     # ticks before declaring dead
+    
+    def verify_pulse(self, pulse: 'LivenessPulse') -> VerificationResult:
+        """
+        Verify a liveness pulse from a capsule.
+        """
+        # Step 1: Verify genesis hash against Vault
+        if not self.vault.verify_genesis(pulse.capsule_id, 
+                                         pulse.genesis_hash):
+            return VerificationResult(
+                valid=False,
+                reason="GENESIS_MISMATCH",
+                action="QUARANTINE_IMMEDIATE"
+            )
+        
+        # Step 2: Verify signature
+        if not self._verify_signature(pulse):
+            return VerificationResult(
+                valid=False,
+                reason="INVALID_SIGNATURE",
+                action="REJECT_GHOST"
+            )
+        
+        # Step 3: Check timestamp freshness
+        if self._is_stale(pulse.timestamp):
+            return VerificationResult(
+                valid=False,
+                reason="STALE_PULSE",
+                action="REQUEST_FRESH"
+            )
+        
+        # Step 4: Verify state hash consistency
+        if not self._verify_state_hash(pulse):
+            return VerificationResult(
+                valid=False,
+                reason="STATE_INCONSISTENT",
+                action="INVESTIGATE"
+            )
+        
+        # Pulse is valid
+        self._update_last_seen(pulse.capsule_id, pulse.timestamp)
+        
+        return VerificationResult(
+            valid=True,
+            reason="PULSE_VERIFIED",
+            health=pulse.health_metrics
+        )
+\end{lstlisting}
+
+\section{Ghost Detection}
+
+A \textbf{ghost} is a capsule that claims to exist but cannot prove its legitimacy through the Vault's genesis records.
+
+\subsection{Ghost Detection Algorithm}
+
+\begin{lstlisting}[language=Python]
+class GhostDetector:
+    """
+    Detects and rejects ghost capsules.
+    """
+    
+    def detect_ghost(self, capsule_id: str, 
+                     claimed_genesis: str) -> GhostDetectionResult:
+        """
+        Determine if a capsule is a ghost.
+        """
+        # Check Vault for genesis record
+        vault_genesis = self.vault.get_genesis(capsule_id)
+        
+        if vault_genesis is None:
+            # No record exists - definitely a ghost
+            return GhostDetectionResult(
+                is_ghost=True,
+                reason="NO_GENESIS_RECORD",
+                confidence=1.0
+            )
+        
+        if vault_genesis != claimed_genesis:
+            # Genesis mismatch - impostor
+            return GhostDetectionResult(
+                is_ghost=True,
+                reason="GENESIS_HASH_MISMATCH",
+                confidence=1.0
+            )
+        
+        return GhostDetectionResult(
+            is_ghost=False,
+            reason="VALID_GENESIS",
+            confidence=1.0
+        )
+\end{lstlisting}
+
+\begin{warningbox}
+Ghost detection is \textbf{absolute}. A capsule that fails genesis verification is \textbf{immediately rejected}---no exceptions, no appeals.
+\end{warningbox}
+
+\section{Spawn Control}
+
+\subsection{Adaptive Spawn Limits}
+
+\begin{lstlisting}[language=Python]
+class SpawnController:
+    """
+    Controls capsule spawning with adaptive limits.
+    """
+    
+    BASE_SPAWN_LIMIT = 10
+    
+    def calculate_spawn_limit(self, stress: float) -> int:
+        """
+        Calculate spawn limit based on system stress.
+        
+        High stress = fewer spawns allowed.
+        """
+        if stress > 0.9:
+            return 0  # No spawning during critical stress
+        elif stress > 0.7:
+            return max(1, int(self.BASE_SPAWN_LIMIT * 0.2))
+        elif stress > 0.5:
+            return max(2, int(self.BASE_SPAWN_LIMIT * 0.5))
+        else:
+            return self.BASE_SPAWN_LIMIT
+\end{lstlisting}
+
+\section{Quarantine Management}
+
+\subsection{Quarantine Triggers}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Trigger} & \textbf{Severity} & \textbf{Action} \\
+\midrule
+Health < 0.3 & HIGH & Immediate quarantine \\
+Ghost detected & CRITICAL & Immediate rejection \\
+Liveness timeout & MEDIUM & Grace period, then quarantine \\
+Genesis mismatch & CRITICAL & Immediate termination \\
+Entropy > 0.9 & HIGH & Quarantine for treatment \\
+\bottomrule
+\end{tabular}
+\caption{Quarantine trigger conditions}
+\end{table}
+
+\section{Guarantees}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Property} & \textbf{Guarantee} \\
+\midrule
+Pulse Verification & \latency{10ms} \\
+Ghost Detection & 100\% rejection of invalid genesis \\
+Spawn Control & Stress-adaptive limits enforced \\
+Quarantine & Immediate isolation on trigger \\
+Recovery & Autonomous healing initiated \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{Configuration}
+
+\begin{lstlisting}
+# asg_config.yaml
+liveness:
+  pulse_interval: 100      # ticks
+  grace_period: 50         # ticks
+  verification_timeout: 10 # ms
+
+spawn:
+  base_limit: 10
+  stress_scaling: true
+  min_health_to_spawn: 0.6
+
+quarantine:
+  health_threshold: 0.3
+  entropy_threshold: 0.9
+  auto_recovery: true
+
+ghost_detection:
+  strict_mode: true
+  log_attempts: true
+\end{lstlisting}
+
+\section{References}
+
+\begin{itemize}
+    \item \appref{A}: d-CTM Forensic Chain (pulse logging)
+    \item \appref{O}: Lifecycle \& Survival (stress response)
+    \item \appref{K++}: Medical Suite (treatment protocols)
+    \item \appref{G}: Gardener Interface (override authority)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Every heartbeat is verified. Every capsule proves it lives.''}
+\end{center}
+
+\end{document}

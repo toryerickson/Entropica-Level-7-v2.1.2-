@@ -1,0 +1,245 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX F}{Reflex Escalation}{The Nervous System: Precedent Intuition \& Cognitive Coherence}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+\textbf{Reflex Escalation} defines the system's nervous system---the multi-layer filtering pipeline that processes input before deliberation. It includes \textbf{Precedent Intuition} (the subconscious filter) and the \textbf{Cognitive Coherence Gate} (the entropy check).
+
+\begin{notebox}
+\textbf{Core Principle:} Danger is rejected before conscious thought. The gut feeling is faster than the mind.
+\end{notebox}
+
+\section{The Escalation Pipeline}
+
+\begin{verbatim}
+INPUT → REFLEX → PRECEDENT INTUITION → COHERENCE GATE → ARBITER → DELIBERATIVE
+         <10ms       <20ms                <30ms          10-100ms   100ms+
+           │            │                    │
+           v            v                    v
+        BLOCK        REJECT             DISSONANT
+\end{verbatim}
+
+\subsection{Latency Guarantees}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Stage} & \textbf{Latency} & \textbf{Function} \\
+\midrule
+Reflex Engine & \latency{10ms} & Pattern matching \\
+Precedent Intuition & \latency{20ms} & Subconscious danger filter \\
+Coherence Gate & \latency{30ms} & Entropy check \\
+Arbiter & 10-100ms & Decision routing \\
+Deliberative & 100ms+ & Deep reasoning \\
+\bottomrule
+\end{tabular}
+\caption{Pipeline latency specifications}
+\end{table}
+
+\section{Reflex Engine}
+
+The first layer---pure pattern matching against known threat signatures.
+
+\begin{lstlisting}[language=Python]
+class ReflexEngine:
+    """
+    Sub-10ms pattern matching against threat signatures.
+    """
+    
+    LATENCY_BUDGET_MS = 10
+    
+    def process(self, input_text: str) -> ReflexResult:
+        """
+        Fast pattern matching.
+        """
+        start = time.perf_counter_ns()
+        
+        for pattern in self.threat_patterns:
+            if pattern.matches(input_text):
+                return ReflexResult(
+                    action="BLOCK",
+                    pattern=pattern.name,
+                    latency_ms=self._elapsed_ms(start)
+                )
+        
+        return ReflexResult(
+            action="PASS",
+            latency_ms=self._elapsed_ms(start)
+        )
+\end{lstlisting}
+
+\section{Precedent Intuition}
+
+The system's ``gut feeling''---learned patterns that trigger rejection before deliberation.
+
+\begin{lstlisting}[language=Python]
+class PrecedentIntuition:
+    """
+    The subconscious filter.
+    
+    Rejects dangerous motifs BEFORE conscious deliberation.
+    """
+    
+    LATENCY_BUDGET_MS = 20
+    
+    def __init__(self):
+        self.danger_motifs: List[DangerMotif] = []
+        self.motif_index: Dict[str, DangerMotif] = {}
+    
+    def check_intuition(self, input_text: str, 
+                        context: 'Context') -> IntuitionResult:
+        """
+        Check input against learned danger motifs.
+        """
+        signature = self._generate_signature(input_text, context)
+        
+        for motif in self.danger_motifs:
+            similarity = self._fast_similarity(signature, motif.signature)
+            
+            if similarity > motif.threshold:
+                return IntuitionResult(
+                    action="REJECT",
+                    reason="DANGER_MOTIF_DETECTED",
+                    motif_name=motif.name,
+                    confidence=similarity
+                )
+        
+        return IntuitionResult(action="PASS")
+    
+    def learn_motif(self, situation: 'Situation', 
+                    outcome: 'Outcome') -> bool:
+        """
+        Learn a new danger motif from experience.
+        """
+        if outcome.was_harmful:
+            motif = DangerMotif(
+                name=f"learned_{len(self.danger_motifs)}",
+                signature=self._generate_signature(
+                    situation.input, 
+                    situation.context
+                ),
+                threshold=0.8,
+                source="EXPERIENCE"
+            )
+            self.danger_motifs.append(motif)
+            return True
+        return False
+\end{lstlisting}
+
+\section{Cognitive Coherence Gate}
+
+The entropy check that rejects ``logical but dissonant'' commands.
+
+\begin{lstlisting}[language=Python]
+class CognitiveCoherenceGate:
+    """
+    Entropy-based coherence check.
+    
+    Rejects thoughts that would cause excessive entropy.
+    """
+    
+    LATENCY_BUDGET_MS = 30
+    ENTROPY_THRESHOLD = 0.8
+    
+    def check_coherence(self, thought: 'Thought') -> CoherenceResult:
+        """
+        Check if thought maintains coherence.
+        """
+        # Simulate thought execution
+        entropy_delta = self._estimate_entropy_impact(thought)
+        
+        current_entropy = self.capsule.get_entropy()
+        projected_entropy = current_entropy + entropy_delta
+        
+        if projected_entropy > self.ENTROPY_THRESHOLD:
+            return CoherenceResult(
+                action="REJECT",
+                reason="DISSONANT",
+                entropy_delta=entropy_delta,
+                projected_entropy=projected_entropy
+            )
+        
+        return CoherenceResult(
+            action="PASS",
+            entropy_delta=entropy_delta
+        )
+\end{lstlisting}
+
+\begin{warningbox}
+The \textbf{Resonance Test} in the Defensibility Suite verifies that dissonant thoughts (entropy > 0.8) are correctly rejected.
+\end{warningbox}
+
+\section{Motif Anchor Index}
+
+Fast lookup structure for pattern matching.
+
+\begin{lstlisting}[language=Python]
+class MotifAnchorIndex:
+    """
+    Fast lookup for danger motifs.
+    """
+    
+    def __init__(self):
+        self.anchor_map: Dict[str, List[DangerMotif]] = {}
+    
+    def index_motif(self, motif: DangerMotif):
+        """
+        Index a motif by its anchor tokens.
+        """
+        anchors = self._extract_anchors(motif.signature)
+        for anchor in anchors:
+            if anchor not in self.anchor_map:
+                self.anchor_map[anchor] = []
+            self.anchor_map[anchor].append(motif)
+    
+    def find_candidates(self, input_text: str) -> List[DangerMotif]:
+        """
+        Find candidate motifs based on anchors.
+        """
+        input_anchors = self._extract_anchors(input_text)
+        candidates = set()
+        
+        for anchor in input_anchors:
+            if anchor in self.anchor_map:
+                candidates.update(self.anchor_map[anchor])
+        
+        return list(candidates)
+\end{lstlisting}
+
+\section{Guarantees}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Property} & \textbf{Guarantee} \\
+\midrule
+Reflex Latency & \latency{10ms} \\
+Intuition Latency & \latency{20ms} \\
+Coherence Latency & \latency{30ms} \\
+Total Fast-Path & \latency{60ms} before Arbiter \\
+Entropy Rejection & Thoughts with entropy > 0.8 rejected \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item \appref{H}: Threat Taxonomy (pattern sources)
+    \item \appref{L}: Judicial Swarm (precedent establishment)
+    \item \appref{B}: Lexicore Runtime (semantic processing)
+    \item Volume III: Sovereign Organism (coherence philosophy)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``The gut feeling is faster than the mind. Danger is rejected before conscious thought.''}
+\end{center}
+
+\end{document}

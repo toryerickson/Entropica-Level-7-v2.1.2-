@@ -1,0 +1,294 @@
+% EFM Codex LaTeX Style Package
+% Version 2.0 - December 2025
+% Entropica SPC - Yology Research Division
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{efm-codex}[2025/12/17 EFM Codex Style Package v2.0]
+
+% ============================================================
+% REQUIRED PACKAGES
+% ============================================================
+
+% Core packages
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{lmodern}
+\RequirePackage{microtype}
+
+% Page layout
+\RequirePackage[margin=1in]{geometry}
+\RequirePackage{fancyhdr}
+\RequirePackage{titlesec}
+
+% Colors and graphics
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,fit,calc,decorations.markings}
+
+% Tables and lists
+\RequirePackage{booktabs}
+\RequirePackage{longtable}
+\RequirePackage{tabularx}
+\RequirePackage{enumitem}
+\RequirePackage{multirow}
+
+% Code listings
+\RequirePackage{listings}
+\RequirePackage{fancyvrb}
+
+% Mathematics
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+
+% Cross-referencing
+\RequirePackage{hyperref}
+\RequirePackage{cleveref}
+
+% Algorithms
+\RequirePackage{algorithm}
+\RequirePackage{algorithmic}
+
+% ============================================================
+% COLOR DEFINITIONS
+% ============================================================
+
+\definecolor{efm-primary}{HTML}{E94560}
+\definecolor{efm-secondary}{HTML}{0F3460}
+\definecolor{efm-dark}{HTML}{1A1A2E}
+\definecolor{efm-accent}{HTML}{16213E}
+\definecolor{efm-light}{HTML}{F5F5F5}
+\definecolor{efm-success}{HTML}{00C851}
+\definecolor{efm-warning}{HTML}{FFBB33}
+\definecolor{efm-danger}{HTML}{FF4444}
+
+% Code colors
+\definecolor{code-bg}{HTML}{F8F8F8}
+\definecolor{code-keyword}{HTML}{0F3460}
+\definecolor{code-string}{HTML}{E94560}
+\definecolor{code-comment}{HTML}{6A737D}
+\definecolor{code-function}{HTML}{6F42C1}
+
+% ============================================================
+% TYPOGRAPHY
+% ============================================================
+
+% Section formatting
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{efm-dark}}
+  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+  
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{efm-secondary}}
+  {\thesection}{1em}{}
+  
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{efm-accent}}
+  {\thesubsection}{1em}{}
+
+% ============================================================
+% CODE LISTINGS
+% ============================================================
+
+\lstdefinestyle{efm-python}{
+    language=Python,
+    backgroundcolor=\color{code-bg},
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{code-keyword}\bfseries,
+    stringstyle=\color{code-string},
+    commentstyle=\color{code-comment}\itshape,
+    emphstyle=\color{code-function},
+    breaklines=true,
+    breakatwhitespace=true,
+    frame=single,
+    framerule=0.5pt,
+    rulecolor=\color{efm-secondary},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    showstringspaces=false,
+    tabsize=4,
+    captionpos=b
+}
+
+\lstdefinestyle{efm-json}{
+    basicstyle=\footnotesize\ttfamily,
+    backgroundcolor=\color{code-bg},
+    stringstyle=\color{code-string},
+    commentstyle=\color{code-comment},
+    frame=single,
+    framerule=0.5pt,
+    rulecolor=\color{efm-secondary},
+    breaklines=true,
+    showstringspaces=false,
+}
+
+\lstset{style=efm-python}
+
+% ============================================================
+% THEOREM ENVIRONMENTS
+% ============================================================
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{property}{Property}[section]
+\newtheorem{commandment}{Commandment}[chapter]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+\newtheorem{example}{Example}[section]
+
+% ============================================================
+% CUSTOM BOXES
+% ============================================================
+
+\RequirePackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+% Principle box
+\newtcolorbox{principle}[1][]{
+    enhanced,
+    colback=efm-light,
+    colframe=efm-primary,
+    fonttitle=\bfseries,
+    title=Principle,
+    #1
+}
+
+% Warning box
+\newtcolorbox{warning}[1][]{
+    enhanced,
+    colback=yellow!10,
+    colframe=efm-warning,
+    fonttitle=\bfseries,
+    title=Warning,
+    #1
+}
+
+% Critical box
+\newtcolorbox{critical}[1][]{
+    enhanced,
+    colback=red!5,
+    colframe=efm-danger,
+    fonttitle=\bfseries,
+    title=Critical,
+    #1
+}
+
+% Implementation note box
+\newtcolorbox{implnote}[1][]{
+    enhanced,
+    colback=blue!5,
+    colframe=efm-secondary,
+    fonttitle=\bfseries,
+    title=Implementation Note,
+    #1
+}
+
+% ============================================================
+% CUSTOM COMMANDS
+% ============================================================
+
+% Document info commands
+\newcommand{\efmversion}{2.0}
+\newcommand{\efmdate}{December 2025}
+\newcommand{\efmauthor}{Entropica SPC --- Yology Research Division}
+
+% Formatting commands
+\newcommand{\layernum}[1]{\textbf{Layer #1}}
+\newcommand{\property}[1]{\textbf{P#1}}
+\newcommand{\spawn}[1]{\textbf{S#1}}
+\newcommand{\cmd}[1]{\textbf{C#1}}
+
+% Technical terms
+\newcommand{\dctm}{d-CTM}
+\newcommand{\zksp}{ZK-SP}
+\newcommand{\sci}{SCI}
+\newcommand{\shsl}{SHSL}
+\newcommand{\asg}{ASG}
+\newcommand{\rag}{RAG}
+
+% Layer references
+\newcommand{\vault}{\textsc{Vault}}
+\newcommand{\reflex}{\textsc{Reflex}}
+\newcommand{\arbiter}{\textsc{Arbiter}}
+\newcommand{\forest}{\textsc{Forest}}
+\newcommand{\gardener}{\textsc{Gardener}}
+\newcommand{\kernel}{\textsc{Kernel}}
+
+% ============================================================
+% HEADER/FOOTER
+% ============================================================
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\textcolor{efm-primary}{\textbf{EFM CODEX v\efmversion}}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+
+% ============================================================
+% HYPERREF CONFIGURATION
+% ============================================================
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=efm-secondary,
+    citecolor=efm-secondary,
+    urlcolor=efm-primary,
+    pdftitle={EFM Codex},
+    pdfauthor={Entropica SPC},
+    pdfsubject={Governed AGI Architecture},
+    pdfkeywords={AGI, AI Safety, Constitutional AI, Forensic AI}
+}
+
+% ============================================================
+% TIKZ STYLES FOR ARCHITECTURE DIAGRAMS
+% ============================================================
+
+\tikzstyle{layer} = [
+    rectangle, 
+    rounded corners, 
+    minimum width=8cm,
+    minimum height=1cm, 
+    text centered, 
+    draw=efm-secondary,
+    fill=efm-light,
+    font=\small\bfseries
+]
+
+\tikzstyle{layer-vault} = [
+    layer,
+    fill=efm-dark,
+    text=white,
+    draw=efm-primary,
+    line width=2pt
+]
+
+\tikzstyle{arrow} = [
+    thick,
+    ->,
+    >=stealth,
+    color=efm-secondary
+]
+
+\tikzstyle{capsule} = [
+    circle,
+    draw=efm-primary,
+    fill=efm-light,
+    minimum size=1cm,
+    font=\footnotesize
+]
+
+% ============================================================
+% END OF PACKAGE
+% ============================================================
+
+\endinput

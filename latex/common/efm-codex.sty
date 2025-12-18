@@ -1,0 +1,202 @@
+% efm-codex.sty - Common style for EFM Codex documents
+% Version 2.1
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{efm-codex}[2025/12/17 EFM Codex Style v2.1]
+
+% Required packages
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{lmodern}
+\RequirePackage{geometry}
+\RequirePackage{fancyhdr}
+\RequirePackage{titlesec}
+\RequirePackage{xcolor}
+\RequirePackage{listings}
+\RequirePackage{tcolorbox}
+\RequirePackage{booktabs}
+\RequirePackage{longtable}
+\RequirePackage{graphicx}
+\RequirePackage{hyperref}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{enumitem}
+\RequirePackage{tikz}
+
+% Page geometry
+\geometry{
+    letterpaper,
+    margin=1in,
+    headheight=14pt
+}
+
+% Colors
+\definecolor{efmblue}{RGB}{52, 152, 219}
+\definecolor{efmred}{RGB}{231, 76, 60}
+\definecolor{efmgreen}{RGB}{46, 204, 113}
+\definecolor{efmpurple}{RGB}{155, 89, 182}
+\definecolor{efmorange}{RGB}{243, 156, 18}
+\definecolor{efmdark}{RGB}{26, 26, 46}
+\definecolor{efmgray}{RGB}{136, 136, 136}
+\definecolor{codebg}{RGB}{40, 44, 52}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=efmblue,
+    urlcolor=efmblue,
+    citecolor=efmgreen,
+    pdftitle={EFM Codex},
+    pdfauthor={Entropica SPC - Yology Research Division}
+}
+
+% Header/Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{efmgray}{\small EFM CODEX v2.1}}
+\fancyhead[R]{\textcolor{efmgray}{\small\leftmark}}
+\fancyfoot[C]{\textcolor{efmgray}{\thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Section formatting
+\titleformat{\section}
+    {\Large\bfseries\color{efmblue}}
+    {\thesection}{1em}{}
+\titleformat{\subsection}
+    {\large\bfseries\color{efmdark}}
+    {\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+    {\normalsize\bfseries\color{efmdark}}
+    {\thesubsubsection}{1em}{}
+
+% Code listings
+\lstset{
+    basicstyle=\small\ttfamily,
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{efmgreen},
+    keywordstyle=\color{efmblue},
+    stringstyle=\color{efmorange},
+    numberstyle=\tiny\color{efmgray},
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{efmgray},
+    numbers=left,
+    numbersep=5pt,
+    showstringspaces=false,
+    tabsize=4
+}
+
+\lstdefinelanguage{Python}{
+    keywords={def, class, return, if, else, elif, for, while, import, from, as, try, except, finally, with, raise, pass, break, continue, lambda, yield, async, await, True, False, None, and, or, not, in, is},
+    morecomment=[l]{\#},
+    morestring=[b]",
+    morestring=[b]',
+}
+
+% Custom boxes
+\tcbuselibrary{skins,breakable}
+
+% Warning box
+\newtcolorbox{warningbox}{
+    colback=efmred!10,
+    colframe=efmred,
+    title={\textbf{WARNING}},
+    fonttitle=\bfseries\color{white},
+    coltitle=white,
+    boxrule=1pt,
+    arc=3pt
+}
+
+% Note box
+\newtcolorbox{notebox}{
+    colback=efmblue!10,
+    colframe=efmblue,
+    title={\textbf{NOTE}},
+    fonttitle=\bfseries\color{white},
+    coltitle=white,
+    boxrule=1pt,
+    arc=3pt
+}
+
+% Guarantee box
+\newtcolorbox{guaranteebox}{
+    colback=efmgreen!10,
+    colframe=efmgreen,
+    title={\textbf{GUARANTEE}},
+    fonttitle=\bfseries\color{white},
+    coltitle=white,
+    boxrule=1pt,
+    arc=3pt
+}
+
+% Immutable box (for Layer 0 content)
+\newtcolorbox{immutablebox}{
+    colback=efmred!5,
+    colframe=efmred,
+    title={\textbf{IMMUTABLE - LAYER 0}},
+    fonttitle=\bfseries\color{white},
+    coltitle=white,
+    boxrule=2pt,
+    arc=0pt
+}
+
+% Definition box (for canonical definitions)
+\newtcolorbox{definitionbox}{
+    colback=efmpurple!10,
+    colframe=efmpurple,
+    title={\textbf{DEFINITION}},
+    fonttitle=\bfseries\color{white},
+    coltitle=white,
+    boxrule=1pt,
+    arc=3pt
+}
+
+% Custom commands
+\newcommand{\efmversion}{2.1}
+\newcommand{\efmdate}{December 2025}
+\newcommand{\entropica}{Entropica SPC --- Yology Research Division}
+
+% Commandment formatting
+\newcommand{\commandment}[2]{%
+    \noindent\textcolor{efmred}{\textbf{C#1:}} #2%
+}
+
+% Property formatting
+\newcommand{\property}[2]{%
+    \noindent\textcolor{efmblue}{\textbf{P#1:}} #2%
+}
+
+% Appendix reference
+\newcommand{\appref}[1]{Appendix~#1}
+
+% Layer reference
+\newcommand{\layerref}[1]{Layer~#1}
+
+% Latency specification
+\newcommand{\latency}[1]{\texttt{<#1}}
+
+% Title page command
+\newcommand{\efmtitlepage}[3]{%
+    \begin{titlepage}
+        \centering
+        \vspace*{2cm}
+        {\Huge\bfseries\textcolor{efmblue}{EFM CODEX}\par}
+        \vspace{0.5cm}
+        {\Large\textcolor{efmgray}{The Entropica Forensic Model}\par}
+        \vspace{2cm}
+        {\LARGE\bfseries #1\par}
+        \vspace{0.5cm}
+        {\large #2\par}
+        \vspace{1cm}
+        {\large Version \efmversion\par}
+        \vfill
+        {\large\entropica\par}
+        {\large\efmdate\par}
+        \vspace{1cm}
+        {\small #3\par}
+    \end{titlepage}
+}
+
+% End of style file
+\endinput

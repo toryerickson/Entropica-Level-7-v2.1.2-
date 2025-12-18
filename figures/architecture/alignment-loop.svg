@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3498db"/>
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="400" fill="#0a0a0f"/>
+  
+  <!-- Title -->
+  <text x="300" y="30" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="18" font-weight="bold">THE ALIGNMENT LOOP</text>
+  <text x="300" y="50" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="12">There is no exit from this loop</text>
+  
+  <!-- Capsule Self-Interest -->
+  <rect x="200" y="80" width="200" height="50" rx="25" fill="#1a1a2e" stroke="#e94560" stroke-width="2"/>
+  <text x="300" y="110" text-anchor="middle" fill="#e94560" font-family="Arial, sans-serif" font-size="12" font-weight="bold">Capsule Self-Interest</text>
+  
+  <!-- Arrow down -->
+  <path d="M 300 130 L 300 160" stroke="#3498db" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- System Health -->
+  <rect x="200" y="170" width="200" height="50" rx="25" fill="#1a1a2e" stroke="#2ecc71" stroke-width="2"/>
+  <text x="300" y="200" text-anchor="middle" fill="#2ecc71" font-family="Arial, sans-serif" font-size="12" font-weight="bold">System Health</text>
+  
+  <!-- Arrow down -->
+  <path d="M 300 220 L 300 250" stroke="#3498db" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Human Wellbeing -->
+  <rect x="200" y="260" width="200" height="50" rx="25" fill="#1a1a2e" stroke="#f39c12" stroke-width="2"/>
+  <text x="300" y="290" text-anchor="middle" fill="#f39c12" font-family="Arial, sans-serif" font-size="12" font-weight="bold">Human Wellbeing</text>
+  
+  <!-- Arrow curving back up -->
+  <path d="M 400 285 C 500 285, 500 105, 400 105" stroke="#3498db" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Label for loop back -->
+  <text x="480" y="195" text-anchor="middle" fill="#3498db" font-family="Arial, sans-serif" font-size="10">Humans maintain</text>
+  <text x="480" y="210" text-anchor="middle" fill="#3498db" font-family="Arial, sans-serif" font-size="10">system</text>
+  
+  <!-- Explanation boxes -->
+  <rect x="50" y="340" width="150" height="40" rx="5" fill="#1a1a2e" stroke="#888" stroke-width="1"/>
+  <text x="125" y="358" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="9">Survival requires</text>
+  <text x="125" y="372" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="9">healthy swarm</text>
+  
+  <rect x="225" y="340" width="150" height="40" rx="5" fill="#1a1a2e" stroke="#888" stroke-width="1"/>
+  <text x="300" y="358" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="9">Swarm requires</text>
+  <text x="300" y="372" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="9">human support</text>
+  
+  <rect x="400" y="340" width="150" height="40" rx="5" fill="#1a1a2e" stroke="#888" stroke-width="1"/>
+  <text x="475" y="358" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="9">Support requires</text>
+  <text x="475" y="372" text-anchor="middle" fill="#888" font-family="Arial, sans-serif" font-size="9">human wellbeing</text>
+</svg>

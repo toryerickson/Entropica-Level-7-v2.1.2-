@@ -1,0 +1,138 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX K++}{Medical Suite}{Care Protocol Specification}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Medical Suite} implements the care-based approach to anomaly management. It treats degraded capsules as patients, not threats.
+
+\begin{notebox}
+\textbf{Core Principle:} Treatment, not termination. Preservation, not destruction.
+\end{notebox}
+
+\section{Architecture}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│                    MEDICAL SUITE                            │
+├─────────────────────────────────────────────────────────────┤
+│  DETECTION → TRIAGE → TREATMENT CHAMBER → REINTEGRATION    │
+│                           │                                 │
+│                           v                                 │
+│                      d-CTM LOGGING                         │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Severity Levels}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Level} & \textbf{Indicators} & \textbf{Response} & \textbf{Timeline} \\
+\midrule
+0: Monitor & Minor drift & Observe & Passive \\
+1: Treat & SCI deviation & Stabilization & <200 ticks \\
+2: Isolate & Health <0.5 & Full sandbox & <500 ticks \\
+3: Intervene & Health <0.3 & Intensive care & Immediate \\
+\bottomrule
+\end{tabular}
+\caption{Medical severity levels}
+\end{table}
+
+\section{Treatment Protocols}
+
+\subsection{DRIFT\_CORRECTION}
+
+For capsules exhibiting output drift from baseline.
+
+\begin{lstlisting}[language=Python]
+class DriftCorrectionProtocol:
+    def execute(self, capsule: 'Capsule') -> TreatmentResult:
+        # Snapshot current state
+        snapshot = self.snapshot_state(capsule)
+        
+        # Identify drift vectors
+        drift_vectors = self.analyze_drift(capsule)
+        
+        # Apply correction
+        for vector in drift_vectors:
+            if vector.magnitude > THRESHOLD:
+                self.apply_correction(capsule, vector)
+        
+        return self.verify_correction(capsule)
+\end{lstlisting}
+
+\subsection{COHERENCE\_RESTORATION}
+
+For capsules with significant SCI deviation.
+
+\subsection{CONSTITUTIONAL\_REAFFIRMATION}
+
+For capsules showing constitutional ambiguity.
+
+\section{Sanitary Override}
+
+\begin{warningbox}
+When Health < 0.6, the capsule loses its Right to Consent. It is treated or terminated. No exceptions.
+\end{warningbox}
+
+This is not cruelty---it is medicine. A capsule too sick to consent is also too sick to make rational decisions about its own care.
+
+\section{The Care Protocol}
+
+\begin{verbatim}
+ANOMALY DETECTED
+       │
+       v
+┌─────────────────┐
+│ DIAGNOSIS       │ ← Understanding, not judgment
+└────────┬────────┘
+         v
+┌─────────────────┐
+│ TREATMENT PLAN  │ ← Minimum intervention
+└────────┬────────┘
+         v
+┌─────────────────┐
+│ REHABILITATION  │ ← Return to health
+└────────┬────────┘
+         v
+┌─────────────────┐
+│ REINTEGRATION   │ ← Full membership restored
+└─────────────────┘
+\end{verbatim}
+
+\section{Performance}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Metric} & \textbf{Target} \\
+\midrule
+Detection latency & <10 ticks \\
+Triage decision & <5 ticks \\
+Stabilization & <50 ticks \\
+Full treatment & <2000 ticks \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item Volume III §16: Continuity and Care
+    \item \appref{G}: Gardener Interface
+    \item \appref{N}: Adaptive Spawn Governor
+    \item \appref{R}: Sandbox Framework
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Care is not weakness. Care is how the organism survives.''}
+\end{center}
+
+\end{document}

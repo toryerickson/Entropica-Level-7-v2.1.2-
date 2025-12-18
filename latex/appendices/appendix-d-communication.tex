@@ -1,0 +1,134 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX D}{Inter-Trunk Communication}{Cross-Capsule Messaging Protocol}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+\textbf{Inter-Trunk Communication} defines how capsules exchange information while maintaining security, integrity, and constitutional compliance.
+
+\begin{notebox}
+\textbf{Core Principle:} Every message is authenticated. Every channel is logged.
+\end{notebox}
+
+\section{Architecture}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│              INTER-TRUNK COMMUNICATION                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  CAPSULE A                              CAPSULE B           │
+│  ┌─────────┐                            ┌─────────┐        │
+│  │ SENDER  │ ─── AUTHENTICATED ───────→ │RECEIVER │        │
+│  └─────────┘     MESSAGE                └─────────┘        │
+│       │                                      │              │
+│       v                                      v              │
+│  ┌─────────┐                            ┌─────────┐        │
+│  │ d-CTM   │                            │ d-CTM   │        │
+│  │ LOG     │                            │ LOG     │        │
+│  └─────────┘                            └─────────┘        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Message Types}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Type} & \textbf{Purpose} & \textbf{Priority} \\
+\midrule
+QUERY & Request information & Normal \\
+RESPONSE & Reply to query & Normal \\
+BROADCAST & Swarm-wide announcement & High \\
+ALERT & Threat notification & Critical \\
+HEARTBEAT & Liveness signal & Background \\
+\bottomrule
+\end{tabular}
+\caption{Message types}
+\end{table}
+
+\section{Message Structure}
+
+\begin{lstlisting}[language=Python]
+@dataclass
+class InterTrunkMessage:
+    id: str
+    sender_id: str
+    recipient_id: str  # or "BROADCAST"
+    message_type: str
+    payload: Dict[str, Any]
+    timestamp: int
+    
+    # Authentication
+    sender_genesis_hash: str
+    signature: str
+    
+    # Routing
+    ttl: int
+    priority: int
+\end{lstlisting}
+
+\section{Authentication}
+
+\begin{lstlisting}[language=Python]
+def verify_message(message: InterTrunkMessage) -> bool:
+    # Verify sender exists
+    sender = registry.get_capsule(message.sender_id)
+    if sender is None:
+        return False
+    
+    # Verify genesis hash matches
+    if sender.genesis.hash != message.sender_genesis_hash:
+        return False
+    
+    # Verify signature
+    return ed25519_verify(
+        message.signature,
+        message.payload_hash,
+        sender.public_key
+    )
+\end{lstlisting}
+
+\section{Channel Security}
+
+\begin{itemize}
+    \item All messages signed with sender's key
+    \item Genesis hash included for identity verification
+    \item Both sender and receiver log to d-CTM
+    \item Replay protection via timestamp + nonce
+\end{itemize}
+
+\section{Performance}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Operation} & \textbf{Latency} \\
+\midrule
+Message send & <5ms \\
+Authentication & <2ms \\
+Broadcast (100 capsules) & <50ms \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item \appref{A}: d-CTM (message logging)
+    \item \appref{L}: Judicial Swarm (consensus messages)
+    \item \appref{N}: ASG (heartbeat protocol)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Every message is authenticated. Every channel is logged.''}
+\end{center}
+
+\end{document}

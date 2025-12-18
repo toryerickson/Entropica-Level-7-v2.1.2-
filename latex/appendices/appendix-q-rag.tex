@@ -1,0 +1,139 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX Q}{Resource Allocation Governor}{Compute, Memory \& Resource Management}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Resource Allocation Governor (RAG)} manages compute, memory, and other resources across capsules, preventing exhaustion and ensuring fair allocation.
+
+\begin{notebox}
+\textbf{Core Principle:} Resources are finite. Allocation is governance.
+\end{notebox}
+
+\section{Architecture}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│              RESOURCE ALLOCATION GOVERNOR                   │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │  REQUEST    │  │  ALLOCATOR  │  │    MONITOR          │ │
+│  │  QUEUE      │→ │             │→ │                     │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
+│                         │                                   │
+│                         v                                   │
+│              ┌─────────────────────┐                       │
+│              │    RESOURCE POOL    │                       │
+│              │  Compute | Memory   │                       │
+│              └─────────────────────┘                       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Resource Types}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Resource} & \textbf{Unit} & \textbf{Limit} & \textbf{Priority} \\
+\midrule
+Compute & CPU-ms & Per-capsule quota & Task-based \\
+Memory & Bytes & Hard cap & Health-based \\
+Network & Bandwidth & Rate limited & Priority queue \\
+Storage & Bytes & Quota per capsule & Age-based \\
+\bottomrule
+\end{tabular}
+\caption{Resource types}
+\end{table}
+
+\section{Allocation Algorithm}
+
+\begin{lstlisting}[language=Python]
+class ResourceAllocator:
+    def allocate(self, request: 'ResourceRequest') -> AllocationResult:
+        # Check availability
+        if not self.pool.has_available(request.resources):
+            return AllocationResult(
+                success=False,
+                reason="INSUFFICIENT_RESOURCES"
+            )
+        
+        # Check capsule quota
+        capsule_usage = self.get_usage(request.capsule_id)
+        if capsule_usage + request.amount > self.quota_for(request.capsule_id):
+            return AllocationResult(
+                success=False,
+                reason="QUOTA_EXCEEDED"
+            )
+        
+        # Allocate
+        allocation = self.pool.reserve(request.resources)
+        return AllocationResult(success=True, allocation=allocation)
+\end{lstlisting}
+
+\section{Quota Management}
+
+\begin{lstlisting}[language=Python]
+def calculate_quota(capsule: 'Capsule') -> ResourceQuota:
+    base_quota = DEFAULT_QUOTA
+    
+    # Adjust for health
+    if capsule.health.composite > 0.8:
+        base_quota *= 1.2  # Healthy capsules get more
+    elif capsule.health.composite < 0.5:
+        base_quota *= 0.5  # Unhealthy get less
+    
+    # Adjust for priority
+    base_quota *= capsule.priority_multiplier
+    
+    return ResourceQuota(
+        compute=base_quota.compute,
+        memory=base_quota.memory
+    )
+\end{lstlisting}
+
+\section{Pressure Response}
+
+When resources are scarce:
+
+\begin{enumerate}
+    \item Reduce exploration across all capsules
+    \item Pause low-priority tasks
+    \item Trigger garbage collection
+    \item Alert Gardener if critical
+\end{enumerate}
+
+\section{Performance}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Operation} & \textbf{Latency} \\
+\midrule
+Allocation decision & <1ms \\
+Quota check & <0.5ms \\
+Resource release & <1ms \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item \appref{N}: ASG (spawn resource checks)
+    \item \appref{O}: Lifecycle (resource tethers)
+    \item \appref{K++}: Medical Suite (treatment resources)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Resources are finite. Allocation is governance.''}
+\end{center}
+
+\end{document}

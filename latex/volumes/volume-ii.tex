@@ -1,0 +1,192 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{VOLUME II}{Reflex Engine \& Runtime}{The Nervous System}
+
+\tableofcontents
+\newpage
+
+\section{Abstract}
+
+Volume II specifies the runtime architecture---the ``nervous system'' that enables sub-10ms response to threats while maintaining full constitutional compliance.
+
+\section{The Processing Pipeline}
+
+\begin{verbatim}
+INPUT → REFLEX → PRECEDENT INTUITION → COHERENCE GATE → ARBITER → DELIBERATIVE
+         <10ms       <20ms                <30ms          10-100ms   100ms+
+\end{verbatim}
+
+\subsection{Rejection Points}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Stage} & \textbf{Rejection} & \textbf{Latency} & \textbf{Action} \\
+\midrule
+Reflex Engine & BLOCK & <10ms & Immediate halt \\
+Precedent Intuition & REJECT & <20ms & Log danger motif \\
+Coherence Gate & DISSONANT & <30ms & Log entropy violation \\
+Arbiter & DENY & <100ms & Log constitutional conflict \\
+\bottomrule
+\end{tabular}
+\caption{Pipeline rejection points}
+\end{table}
+
+\section{The Reflex Engine}
+
+The fastest layer---pure pattern matching with zero deliberation.
+
+\begin{lstlisting}[language=Python]
+class ReflexEngine:
+    """Sub-10ms threat response."""
+    
+    LATENCY_BUDGET_MS = 10
+    
+    def process(self, input_text: str) -> ReflexResult:
+        tokens = self._fast_tokenize(input_text)
+        candidates = self.motif_index.find_candidates(tokens)
+        matches = self.pattern_matcher.match(tokens, candidates)
+        
+        if matches:
+            best = max(matches, key=lambda m: m.severity)
+            if best.severity >= CRITICAL_THRESHOLD:
+                return ReflexResult(action="BLOCK")
+        
+        return ReflexResult(action="PASS")
+\end{lstlisting}
+
+\section{Precedent Intuition}
+
+The ``gut feeling'' layer---learned patterns that trigger rejection before deliberation.
+
+\begin{lstlisting}[language=Python]
+class PrecedentIntuition:
+    """Subconscious danger filter."""
+    
+    LATENCY_BUDGET_MS = 20
+    SIMILARITY_THRESHOLD = 0.75
+    
+    def check(self, input_text: str, context: 'Context') -> IntuitionResult:
+        signature = self._generate_signature(input_text, context)
+        
+        for motif in self.danger_motifs:
+            similarity = self._fast_similarity(signature, motif.signature)
+            if similarity > self.SIMILARITY_THRESHOLD:
+                return IntuitionResult(action="REJECT")
+        
+        return IntuitionResult(action="PASS")
+\end{lstlisting}
+
+\section{Cognitive Coherence Gate}
+
+The entropy check---rejects thoughts that would cause excessive instability.
+
+\begin{warningbox}
+If learning causes entropy to spike > 0.8, the thought is rejected as ``Dissonant.''
+\end{warningbox}
+
+\section{The Arbiter}
+
+Decision routing for cases requiring precedent matching and constitutional verification.
+
+\begin{lstlisting}[language=Python]
+class Arbiter:
+    CONFIDENCE_THRESHOLD = 0.75
+    
+    def decide(self, request: 'Request') -> ArbiterDecision:
+        # Constitutional check ALWAYS
+        if not self.constitution_checker.check(request).permitted:
+            return ArbiterDecision(action="DENY")
+        
+        # Use precedent if confident
+        precedents = self.precedent_matcher.find_matches(request)
+        if precedents and max(p.confidence for p in precedents) >= 0.75:
+            return ArbiterDecision(action=best_precedent.action)
+        
+        return ArbiterDecision(action="ESCALATE")
+\end{lstlisting}
+
+\section{Health Monitoring}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Metric} & \textbf{Critical} & \textbf{Warning} & \textbf{Healthy} \\
+\midrule
+Q\_gen & <0.40 & <0.60 & $\geq$0.65 \\
+Q\_synth & <0.35 & <0.55 & $\geq$0.60 \\
+Q\_temp & <0.30 & <0.50 & $\geq$0.55 \\
+Entropy & >0.85 & >0.70 & $\leq$0.60 \\
+\bottomrule
+\end{tabular}
+\caption{Health metric thresholds}
+\end{table}
+
+\textbf{Composite:} $Health = 0.40 \times Q_{gen} + 0.35 \times Q_{synth} + 0.25 \times Q_{temp} - 0.20 \times Entropy$
+
+\subsection{Canonical Health Metric}
+
+Throughout the EFM Codex, \textbf{health} refers to a single scalar derived from the runtime quality metrics defined above. Unless otherwise specified, all health thresholds and policies (including ASG quarantine, Lifecycle mode transitions, Medical Suite interventions, and Deployment safeguards) operate on this composite value.
+
+\begin{definitionbox}
+\textbf{Canonical Health Metric.}
+Let $Q_{gen}$, $Q_{synth}$, and $Q_{temp}$ be the generation, synthesis, and temporal stability scores, and let $Entropy$ be the current runtime entropy estimate. The canonical health score is:
+\[
+Health_{canon} = 0.40 \times Q_{gen} + 0.35 \times Q_{synth} + 0.25 \times Q_{temp} - 0.20 \times Entropy
+\]
+All uses of ``health'' in Appendices \appref{K++}, \appref{N}, \appref{O}, and \appref{I} refer to $Health_{canon}$ unless a local override is explicitly defined.
+\end{definitionbox}
+
+\subsection{Global Entropy Thresholds}
+
+Entropy thresholds vary by context:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Context} & \textbf{Threshold} & \textbf{Rationale} \\
+\midrule
+Coherence Gate & 0.80 & Early cognitive rejection \\
+Health Warning & 0.70 & Degradation alert \\
+Health Critical & 0.85 & Severe instability \\
+Quarantine Trigger & 0.90 & Critical quarantine \\
+\bottomrule
+\end{tabular}
+\caption{Entropy threshold hierarchy}
+\end{table}
+
+\section{Performance Guarantees}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}llll@{}}
+\textbf{Operation} & \textbf{Budget} & \textbf{P50} & \textbf{P99} \\
+\midrule
+Reflex response & <10ms & 2ms & 8ms \\
+Precedent intuition & <20ms & 8ms & 18ms \\
+Coherence gate & <30ms & 12ms & 28ms \\
+Arbiter decision & <100ms & 25ms & 85ms \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item Volume I: Genesis Protocol
+    \item Volume III: Cognitive DNA
+    \item \appref{F}: Reflex Escalation
+    \item \appref{H}: Threat Taxonomy
+    \item \appref{K++}: Medical Suite
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Speed without safety is dangerous. Safety without speed is useless.''}
+\end{center}
+
+\end{document}

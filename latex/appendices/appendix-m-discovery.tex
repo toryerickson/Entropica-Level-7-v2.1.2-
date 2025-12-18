@@ -1,0 +1,132 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX M}{Discovery Stack}{Knowledge Acquisition \& Learning}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Discovery Stack} manages how capsules acquire, validate, and integrate new knowledge while maintaining constitutional compliance.
+
+\begin{notebox}
+\textbf{Core Principle:} Learn continuously. Verify always. Never compromise integrity.
+\end{notebox}
+
+\section{Architecture}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│                    DISCOVERY STACK                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
+│  │  SENSOR     │  │  VALIDATOR  │  │    INTEGRATOR       │ │
+│  │  LAYER      │→ │             │→ │                     │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘ │
+│         │               │                    │              │
+│         v               v                    v              │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │               KNOWLEDGE BASE                         │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Discovery Modes}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Mode} & \textbf{Trigger} & \textbf{Scope} & \textbf{Risk} \\
+\midrule
+PASSIVE & Continuous & Low bandwidth & Minimal \\
+ACTIVE & Task-driven & Targeted & Low \\
+EXPLORATORY & Curiosity & Broad & Medium \\
+INTENSIVE & Research & Deep & Higher \\
+\bottomrule
+\end{tabular}
+\caption{Discovery modes}
+\end{table}
+
+\section{Validation Pipeline}
+
+\begin{lstlisting}[language=Python]
+class KnowledgeValidator:
+    def validate(self, knowledge: 'Knowledge') -> ValidationResult:
+        # Check source credibility
+        if not self.verify_source(knowledge.source):
+            return ValidationResult(valid=False, reason="UNTRUSTED_SOURCE")
+        
+        # Check consistency with existing knowledge
+        conflicts = self.find_conflicts(knowledge)
+        if conflicts and not self.can_resolve(conflicts):
+            return ValidationResult(valid=False, reason="UNRESOLVABLE_CONFLICT")
+        
+        # Check constitutional compatibility
+        if not self.constitutional_check(knowledge):
+            return ValidationResult(valid=False, reason="CONSTITUTIONAL_VIOLATION")
+        
+        return ValidationResult(valid=True)
+\end{lstlisting}
+
+\section{Integration Process}
+
+\begin{lstlisting}[language=Python]
+class KnowledgeIntegrator:
+    def integrate(self, knowledge: 'Knowledge') -> IntegrationResult:
+        # Estimate entropy impact
+        entropy_delta = self.estimate_entropy_impact(knowledge)
+        
+        if self.current_entropy + entropy_delta > 0.8:
+            return IntegrationResult(
+                success=False,
+                reason="WOULD_EXCEED_ENTROPY_THRESHOLD"
+            )
+        
+        # Integrate into knowledge base
+        self.knowledge_base.add(knowledge)
+        
+        # Update related structures
+        self.lexicon.update(knowledge.terms)
+        self.ontology.add_relations(knowledge.relations)
+        
+        return IntegrationResult(success=True)
+\end{lstlisting}
+
+\section{Learning Constraints}
+
+\begin{warningbox}
+Knowledge that would cause entropy > 0.8 is rejected as ``Dissonant''---even if factually correct.
+\end{warningbox}
+
+\section{Performance}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Operation} & \textbf{Latency} \\
+\midrule
+Validation & <50ms \\
+Integration & <100ms \\
+Conflict resolution & <500ms \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item Volume III: Cognitive DNA
+    \item \appref{B}: Lexicore Runtime
+    \item \appref{F}: Reflex Escalation (coherence check)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Learn continuously. Verify always. Never compromise integrity.''}
+\end{center}
+
+\end{document}

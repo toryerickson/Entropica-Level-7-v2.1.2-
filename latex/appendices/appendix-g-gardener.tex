@@ -1,0 +1,209 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX G}{Gardener Interface}{Human Authority Layer}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Gardener Interface} defines the human authority layer---the mechanisms by which humans maintain oversight and control over the EFM system.
+
+\begin{notebox}
+\textbf{Core Principle:} Human authority is preserved. The Gardener tends the garden.
+\end{notebox}
+
+\section{Authority Levels}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Level} & \textbf{Name} & \textbf{Capabilities} & \textbf{Latency} \\
+\midrule
+0 & OBSERVER & Read-only monitoring & N/A \\
+1 & OPERATOR & Task assignment, basic config & 1s \\
+2 & ADMINISTRATOR & Health intervention, tether adjustment & 500ms \\
+3 & GUARDIAN & Emergency override, quarantine & 100ms \\
+4 & ARCHITECT & Constitutional interpretation & 100ms \\
+\bottomrule
+\end{tabular}
+\caption{Gardener authority levels}
+\end{table}
+
+\section{Command Interface}
+
+\begin{lstlisting}[language=Python]
+class GardenerInterface:
+    """
+    Human authority interface.
+    """
+    
+    COMMAND_LATENCY_MS = 100  # Maximum response time
+    
+    def execute_command(self, command: 'GardenerCommand') -> CommandResult:
+        """
+        Execute a Gardener command.
+        """
+        # Verify authority level
+        if command.required_level > self.current_gardener.level:
+            return CommandResult(
+                success=False,
+                reason="INSUFFICIENT_AUTHORITY"
+            )
+        
+        # Log command (BEFORE execution)
+        self.dctm.log("GARDENER_COMMAND", "GARDENER", {
+            "command": command.type,
+            "target": command.target,
+            "gardener_id": self.current_gardener.id
+        })
+        
+        # Execute based on type
+        if command.type == "EMERGENCY_HALT":
+            return self._emergency_halt(command)
+        elif command.type == "QUARANTINE":
+            return self._quarantine_capsule(command)
+        elif command.type == "SANITARY_OVERRIDE":
+            return self._sanitary_override(command)
+        elif command.type == "TETHER_ADJUST":
+            return self._adjust_tethers(command)
+        
+        return CommandResult(success=False, reason="UNKNOWN_COMMAND")
+\end{lstlisting}
+
+\section{Sanitary Override}
+
+\begin{immutablebox}
+\textbf{SANITARY OVERRIDE RULE:} If a capsule's Health Score drops below 0.6, it loses its \textbf{Right to Consent}. It is treated or terminated. No exceptions.
+\end{immutablebox}
+
+\begin{lstlisting}[language=Python]
+class SanitaryOverride:
+    """
+    Mandatory treatment for unhealthy capsules.
+    """
+    
+    HEALTH_THRESHOLD = 0.6
+    
+    def check_override(self, capsule: 'Capsule') -> OverrideResult:
+        """
+        Check if sanitary override applies.
+        """
+        health = capsule.get_health().composite
+        
+        if health < self.HEALTH_THRESHOLD:
+            return OverrideResult(
+                override_active=True,
+                reason="HEALTH_BELOW_THRESHOLD",
+                health=health,
+                action="MANDATORY_TREATMENT"
+            )
+        
+        return OverrideResult(override_active=False)
+    
+    def apply_override(self, capsule: 'Capsule') -> TreatmentResult:
+        """
+        Apply sanitary override - mandatory treatment.
+        """
+        # Log override
+        self.dctm.log("SANITARY_OVERRIDE", capsule.id, {
+            "health": capsule.get_health().composite
+        })
+        
+        # Capsule cannot refuse
+        capsule.consent_required = False
+        
+        # Initiate treatment
+        return self.medical_suite.treat(capsule, mandatory=True)
+\end{lstlisting}
+
+\section{Emergency Override}
+
+\begin{lstlisting}[language=Python]
+class EmergencyOverride:
+    """
+    Immediate system intervention.
+    """
+    
+    LATENCY_GUARANTEE_MS = 100
+    
+    def emergency_halt(self, scope: str = "ALL") -> HaltResult:
+        """
+        Emergency system halt.
+        
+        Stops all processing immediately.
+        """
+        start = time.perf_counter_ns()
+        
+        if scope == "ALL":
+            self.swarm.halt_all()
+        else:
+            capsule = self.swarm.get_capsule(scope)
+            if capsule:
+                capsule.halt()
+        
+        elapsed_ms = (time.perf_counter_ns() - start) / 1_000_000
+        
+        return HaltResult(
+            success=True,
+            scope=scope,
+            latency_ms=elapsed_ms
+        )
+\end{lstlisting}
+
+\section{Audit Requirements}
+
+All Gardener actions are logged to the d-CTM forensic chain:
+
+\begin{lstlisting}[language=Python]
+@dataclass
+class GardenerAuditEntry:
+    """
+    Audit entry for Gardener actions.
+    """
+    timestamp: int
+    gardener_id: str
+    authority_level: int
+    command_type: str
+    target: str
+    parameters: Dict[str, Any]
+    result: str
+    
+    # Cryptographic proof
+    signature: str
+    previous_hash: str
+\end{lstlisting}
+
+\section{Guarantees}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Property} & \textbf{Guarantee} \\
+\midrule
+Command Latency & \latency{100ms} for all commands \\
+Emergency Halt & Immediate effect, all capsules \\
+Sanitary Override & Automatic at health < 0.6 \\
+Audit Trail & All commands logged to d-CTM \\
+Authority Verification & Always checked before execution \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item \appref{K++}: Medical Suite (treatment protocols)
+    \item \appref{N}: Adaptive Spawn Governor (halt coordination)
+    \item \appref{A}: d-CTM (audit logging)
+    \item \appref{O}: Lifecycle (tether adjustment)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Human authority is preserved. The Gardener tends the garden.''}
+\end{center}
+
+\end{document}

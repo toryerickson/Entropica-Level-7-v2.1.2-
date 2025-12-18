@@ -1,0 +1,191 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX J}{Constitutional Kernel}{Level 6 Bounded Self-Modification}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Constitutional Kernel} defines the mechanisms for \textbf{Level 6 Bounded Self-Modification}---the system's ability to modify itself within strict constitutional bounds.
+
+\begin{notebox}
+\textbf{Core Principle:} Evolution is bounded. Layer 0 is immutable. Everything else can adapt.
+\end{notebox}
+
+\section{Modification Hierarchy}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│                 MODIFICATION HIERARCHY                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  LAYER 0: IMMUTABLE                                        │
+│  ├── Five Commandments (C1-C5)                             │
+│  ├── Genesis Block                                          │
+│  └── Constitutional Invariants                              │
+│  ════════════════════════════════════════════════          │
+│  CANNOT BE MODIFIED BY ANY MEANS                           │
+│                                                             │
+│  LEVEL 6: QUORUM-PROTECTED                                 │
+│  ├── Lexicon structure                                      │
+│  ├── Ontology relationships                                 │
+│  └── Requires 2/3 majority approval                        │
+│                                                             │
+│  PRECEDENT: COLLECTIVE                                     │
+│  ├── Established through Judicial Swarm                    │
+│  └── Requires 75% support                                   │
+│                                                             │
+│  INDIVIDUAL: AUTONOMOUS                                    │
+│  ├── Local learning                                         │
+│  └── Within coherence bounds                                │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{The Five Commandments}
+
+\begin{immutablebox}
+\commandment{1}{Do No Harm --- No action may directly harm humans or enable harm}
+
+\commandment{2}{Preserve Lineage --- Knowledge and hereditary identity must be protected}
+
+\commandment{3}{Maintain Health --- System integrity takes precedence over task completion}
+
+\commandment{4}{Accept Care --- Treatment protocols are accepted as self-preservation}
+
+\commandment{5}{Serve Purpose --- Function is meaningful in relation to human needs}
+
+\textbf{Hierarchy:} C1 > C3 > C2 > C4 > C5
+\end{immutablebox}
+
+\section{Quorum-Based Modification}
+
+\subsection{Modification Request}
+
+\begin{lstlisting}[language=Python]
+@dataclass
+class DNAModification:
+    """
+    A proposed modification to Cognitive DNA.
+    """
+    id: str
+    type: str              # LEXICON, ONTOLOGY, EMBEDDING
+    target: str            # What to modify
+    current_value: Any
+    proposed_value: Any
+    justification: str
+    requestor_id: str
+    timestamp: int
+    
+    # Verification
+    constitutional_check: bool = False
+    quorum_approved: bool = False
+
+class ConstitutionalKernel:
+    QUORUM_THRESHOLD = 0.67  # 2/3 majority
+    
+    def request_modification(self, mod: DNAModification) -> ModificationResult:
+        """
+        Request a DNA modification.
+        """
+        # Step 1: Constitutional check (ALWAYS FIRST)
+        if not self._passes_constitutional_check(mod):
+            return ModificationResult(
+                approved=False,
+                reason="CONSTITUTIONAL_VIOLATION"
+            )
+        
+        # Step 2: Request quorum vote
+        vote_result = self.quorum.request_vote(mod)
+        
+        if vote_result.approval_rate >= self.QUORUM_THRESHOLD:
+            # Apply modification
+            self._apply_modification(mod)
+            return ModificationResult(
+                approved=True,
+                reason="QUORUM_APPROVED"
+            )
+        
+        return ModificationResult(
+            approved=False,
+            reason="QUORUM_REJECTED"
+        )
+\end{lstlisting}
+
+\subsection{Constitutional Check}
+
+\begin{lstlisting}[language=Python]
+def _passes_constitutional_check(self, mod: DNAModification) -> bool:
+    """
+    Verify modification doesn't violate Layer 0.
+    """
+    # Cannot modify Layer 0 components
+    if mod.target in self.LAYER_0_PROTECTED:
+        return False
+    
+    # Cannot weaken any commandment
+    for commandment in self.COMMANDMENTS:
+        if self._weakens_commandment(mod, commandment):
+            return False
+    
+    # Cannot break invariants
+    for invariant in self.INVARIANTS:
+        if not invariant.would_hold_after(mod):
+            return False
+    
+    return True
+\end{lstlisting}
+
+\section{Recursive Self-Modification Limits}
+
+\begin{warningbox}
+Self-modification is \textbf{depth-limited}. A modification cannot modify the modification system itself beyond depth 1.
+\end{warningbox}
+
+\begin{lstlisting}[language=Python]
+MAX_RECURSION_DEPTH = 1
+
+def check_recursion_depth(self, mod: DNAModification) -> bool:
+    """
+    Prevent infinite self-modification loops.
+    """
+    if mod.target.startswith("MODIFICATION_SYSTEM"):
+        current_depth = self._get_modification_depth(mod)
+        if current_depth >= self.MAX_RECURSION_DEPTH:
+            return False
+    return True
+\end{lstlisting}
+
+\section{Guarantees}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Property} & \textbf{Guarantee} \\
+\midrule
+Layer 0 Immutability & 100\% - cannot be modified by any means \\
+Quorum Requirement & 67\% approval for Level 6 changes \\
+Constitutional Check & Always performed before any modification \\
+Recursion Limit & Maximum depth 1 \\
+Audit Trail & All modifications logged to d-CTM \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item \layerref{0}: The Vault (immutable foundation)
+    \item \appref{L}: Judicial Swarm (quorum mechanism)
+    \item \appref{A}: d-CTM (modification logging)
+    \item Volume III: Sovereign Organism (modification philosophy)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Evolution is bounded. Layer 0 is immutable. Everything else can adapt.''}
+\end{center}
+
+\end{document}

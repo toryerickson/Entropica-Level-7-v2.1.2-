@@ -1,0 +1,160 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{../common/efm-codex}
+
+\begin{document}
+
+\efmtitlepage{APPENDIX R}{Sandbox Framework}{Isolation \& Controlled Execution}
+
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+The \textbf{Sandbox Framework} provides isolated execution environments for testing, treatment, and experimental operations.
+
+\begin{notebox}
+\textbf{Core Principle:} Contain first. Understand second. Release only when safe.
+\end{notebox}
+
+\section{Architecture}
+
+\begin{verbatim}
+┌─────────────────────────────────────────────────────────────┐
+│                   SANDBOX FRAMEWORK                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌───────────────────────────────────────────────────────┐ │
+│  │                 ISOLATION BOUNDARY                     │ │
+│  │  ┌─────────────────────────────────────────────────┐  │ │
+│  │  │              SANDBOXED CAPSULE                   │  │ │
+│  │  │                                                  │  │ │
+│  │  │  • No external communication                     │  │ │
+│  │  │  • Limited resources                             │  │ │
+│  │  │  • Full monitoring                               │  │ │
+│  │  │  • Rollback capability                           │  │ │
+│  │  └─────────────────────────────────────────────────┘  │ │
+│  └───────────────────────────────────────────────────────┘ │
+│                          │                                  │
+│                          v                                  │
+│              ┌─────────────────────┐                       │
+│              │    d-CTM LOGGING    │                       │
+│              └─────────────────────┘                       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+\end{verbatim}
+
+\section{Isolation Levels}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Level} & \textbf{Communication} & \textbf{Resources} & \textbf{Use Case} \\
+\midrule
+LIGHT & Limited & Normal & Testing \\
+STANDARD & Blocked & Reduced & Treatment \\
+STRICT & None & Minimal & Quarantine \\
+AIRGAP & Physical isolation & Dedicated & Research \\
+\bottomrule
+\end{tabular}
+\caption{Isolation levels}
+\end{table}
+
+\section{Sandbox Management}
+
+\begin{lstlisting}[language=Python]
+class SandboxManager:
+    def create_sandbox(self, capsule: 'Capsule', 
+                       level: str) -> 'Sandbox':
+        # Create isolated environment
+        sandbox = Sandbox(
+            id=f"sandbox_{uuid.uuid4().hex[:8]}",
+            capsule_id=capsule.id,
+            level=level,
+            created_tick=self.current_tick
+        )
+        
+        # Snapshot state for rollback
+        sandbox.state_snapshot = capsule.snapshot_state()
+        
+        # Apply isolation
+        self.apply_isolation(sandbox, level)
+        
+        # Log creation
+        self.dctm.log("SANDBOX_CREATED", sandbox.id, {
+            "capsule_id": capsule.id,
+            "level": level
+        })
+        
+        return sandbox
+    
+    def release(self, sandbox: 'Sandbox') -> bool:
+        # Verify safe to release
+        if not self.verify_safe(sandbox):
+            return False
+        
+        # Remove isolation
+        self.remove_isolation(sandbox)
+        
+        # Log release
+        self.dctm.log("SANDBOX_RELEASED", sandbox.id, {
+            "duration_ticks": self.current_tick - sandbox.created_tick
+        })
+        
+        return True
+\end{lstlisting}
+
+\section{Rollback Capability}
+
+\begin{lstlisting}[language=Python]
+def rollback(sandbox: 'Sandbox') -> bool:
+    """Restore capsule to pre-sandbox state."""
+    capsule = get_capsule(sandbox.capsule_id)
+    
+    # Restore from snapshot
+    capsule.restore_state(sandbox.state_snapshot)
+    
+    # Log rollback
+    dctm.log("SANDBOX_ROLLBACK", sandbox.id, {
+        "capsule_id": sandbox.capsule_id
+    })
+    
+    return True
+\end{lstlisting}
+
+\section{Use Cases}
+
+\begin{description}
+\item[Testing] Validate changes before production
+\item[Treatment] Medical intervention in isolation
+\item[Research] Experimental operations safely
+\item[Quarantine] Contain compromised capsules
+\end{description}
+
+\section{Performance}
+
+\begin{guaranteebox}
+\begin{tabular}{@{}ll@{}}
+\textbf{Operation} & \textbf{Latency} \\
+\midrule
+Sandbox creation & <50ms \\
+State snapshot & <100ms \\
+Rollback & <100ms \\
+Release verification & <50ms \\
+\end{tabular}
+\end{guaranteebox}
+
+\section{References}
+
+\begin{itemize}
+    \item \appref{C}: Simulation Harness
+    \item \appref{J}: Constitutional Kernel (modification testing)
+    \item \appref{K++}: Medical Suite (treatment isolation)
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{``Contain first. Understand second. Release only when safe.''}
+\end{center}
+
+\end{document}
