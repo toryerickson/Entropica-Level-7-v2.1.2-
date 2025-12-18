@@ -1,5 +1,5 @@
 # EFM CODEX
-## The Entropica Forensic Model — Technical Specification v2.1
+## The Entropica Model: EFM+LLM=AGI — Technical Specification v2.1.2
 
 <p align="center">
   <img src="figures/architecture/efm-logo.svg" alt="EFM Logo" width="200"/>
@@ -247,8 +247,8 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed history.
 
 ```bibtex
 @techreport{efm-codex-2025,
-  title={EFM Codex: The Entropica Forensic Model Technical Specification},
-  author={Entropica SPC, Yology Research Division},
+  title={The Entropica Model: EFM+LLM=AGI — Technical Specification v2.1.2},
+  author={T. Stanford Erickson, Entropica SPC, Yology Research Division},
   year={2025},
   version={2.1},
   institution={Entropica SPC}
