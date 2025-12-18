@@ -18,7 +18,7 @@ The EFM Codex documentation is licensed under the Creative Commons Attribution 4
 ```
 Creative Commons Attribution 4.0 International License
 
-Copyright (c) 2025 Entropica SPC, Yology Research Division
+Copyright (c) 2025 T. Stanford Erickson, Entropica SPC, Yology Research Division
 
 You are free to:
 
@@ -87,8 +87,8 @@ When referencing the EFM Codex in academic or professional work, please use:
 
 ```bibtex
 @techreport{efm-codex-2025,
-  title     = {The Entropica Forensic Model: A Sovereign Organism Framework for Governed AGI},
-  author    = {Entropica SPC, Yology Research Division},
+  title     = {The Entropica Model: EFM+LLM=AGI — Technical Specification v2.1.2},
+  author    = {T. Stanford Erickson, Entropica SPC, Yology.ai Research Division},
   year      = {2025},
   month     = {December},
   version   = {2.0},
@@ -100,7 +100,7 @@ When referencing the EFM Codex in academic or professional work, please use:
 
 ## Trademark
 
-"Entropica," "EFM Codex," "Yology," and associated logos are trademarks of Entropica SPC. Use of these trademarks requires written permission.
+"Entropica," "EFM Codex," "Yology.ai," "Yology," "Entropica Forensic Model," "EFM." "EFM+LLM=AGI," and associated logos are trademarks of Entropica SPC. / T. Stanford Erickson. Use of these trademarks requires written permission.
 
 ---
 
